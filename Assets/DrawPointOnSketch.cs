@@ -16,74 +16,44 @@ public class DrawPointOnSketch : MonoBehaviour
     [SerializeField] bool SnapToGrid = true;
     [SerializeField] float GridSize = 25;
 
-    Vector3 reticlePosition;
-    Vector3 reticleNormal;
-
-   
-    private void Awake()
-    {
-        if (m_RayInteractor == null)
-        {
-            Debug.LogWarning("2Cannot perform reticle position lookup without a valid Ray Interactor set.", this);
-        }
-    }
-
-    private void OnEnable()
-    {
-        if (rayInteractor != null)
-        {
-            rayInteractor.hoverEntered.AddListener(UpdateReticlePosition);
-            print("Interaction Enabled");
-        }
-    }
-    void OnDisable()
-    {
-        if (rayInteractor != null)
-        {
-            rayInteractor.hoverEntered.RemoveListener(UpdateReticlePosition);
-        }
-    }
 
     private void Update()
     {
-        rayInteractor.TryGetHitInfo(out reticlePosition, out reticleNormal, out _, out bool isValid);
-
-        if (isValid)
+        if (GetPointerPosition(out Vector3 absPos, out Vector3 relPos))
         {
-            if (SnapToGrid)
-            {
-                Vector3 PlaneRelative = Plane.transform.InverseTransformPoint(reticlePosition);
-                float SnappedRelativeX = (int)Math.Round((PlaneRelative.x / GridSize)) * GridSize;
-                float SnappedRelativeY = (int)Math.Round((PlaneRelative.y / GridSize)) * GridSize;
-
-                Vector3 SnappedReticlePos = Plane.transform.TransformPoint(SnappedRelativeX, SnappedRelativeY, 0);
-
-                print(SnappedReticlePos.ToString());
-
-                Reticle.transform.position = SnappedReticlePos;
-                Reticle.GetComponent<Renderer>().enabled = true;
-            }
-            else
-            {
-                Reticle.transform.position = reticlePosition;
-                Reticle.GetComponent<Renderer>().enabled = true;
-            }
-        }
-
-        else
-        {
-            Reticle.GetComponent<Renderer>().enabled = false;
+            Reticle.GetComponent<Renderer>().enabled = true;
+            Reticle.transform.position = absPos;
         }
     }
 
-    public void UpdateReticlePosition(HoverEnterEventArgs args)
+    public bool GetPointerPosition(out Vector3 absPos, out Vector3 relPos)
     {
-        print("Reticle Update");
+        rayInteractor.TryGetHitInfo(out Vector3 reticlePosition, out _, out _, out bool isValid);
 
-
-        if(rayInteractor.TryGetHitInfo(out reticlePosition, out reticleNormal, out _, out _))
+        if (!isValid)
         {
-            Reticle.transform.position = reticlePosition;
-        }       
+            absPos = Vector3.zero;
+            relPos = Vector3.zero;
+            return false;
+        }
+
+        Vector3 PlaneRelative = Plane.transform.InverseTransformPoint(reticlePosition);
+
+        if (!SnapToGrid)
+        {
+            absPos = reticlePosition;
+            relPos = PlaneRelative;
+            return true;
+        }        
+
+        float SnappedRelativeX = (int)Math.Round((PlaneRelative.x / GridSize)) * GridSize;
+        float SnappedRelativeY = (int)Math.Round((PlaneRelative.y / GridSize)) * GridSize;
+
+        Vector3 SnappedReticlePos = Plane.transform.TransformPoint(SnappedRelativeX, SnappedRelativeY, 0);
+
+        absPos = SnappedReticlePos;
+        relPos = PlaneRelative;
+
+        return true;
     }
 }
