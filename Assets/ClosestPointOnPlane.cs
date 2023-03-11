@@ -20,7 +20,8 @@ public class ClosestPointOnPlane : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 Projection = DrawingPlane.Plane.ClosestPointOnPlane(ControllerTransform.position);        
+        Vector3 Projection = DrawingPlane.Plane.ClosestPointOnPlane(ControllerTransform.position);  
+       
 
         if (Vector3.Distance(Projection, ControllerTransform.position) < ActivationDistance)
         {
