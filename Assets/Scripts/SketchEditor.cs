@@ -6,9 +6,9 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class SketchEdit : MonoBehaviour
+public class SketchEditor : MonoBehaviour
 {
-    public static event Action<Vector2> OnPointAdded;
+    public static event Action OnPointAdded;
 
     [SerializeField] private GameObject Reticle;
     [SerializeField] private XRRayInteractor RayInteractor;
@@ -19,16 +19,11 @@ public class SketchEdit : MonoBehaviour
     [SerializeField] bool SnapToGrid;
     [SerializeField] float SnapSize;
 
-    SketchPoints sketchPoints = new SketchPoints();
+    public Sketch sketch;
 
     private void Awake()
     {
-        // Controller.GetComponent<XRBaseControllerInteractor>().allowHoveredActivate = true;
-    }
-
-    public void SelectEntered()
-    {
-        print("Select Called");
+        sketch = new Sketch();
     }
 
     private void Update()
@@ -42,10 +37,16 @@ public class SketchEdit : MonoBehaviour
 
     public void AddPoint()
     {
-        print("Adding Point");
-        if (GetPointerPosition(out _, out Vector3 relPos))
+        if (GetPointerPosition(out Vector3 absPos, out Vector3 relPos))
         {
-            SketchEdit.OnPointAdded?.Invoke(relPos);
+            int id = sketch.AddPoint(relPos.x, relPos.z);
+            print(id);
+            print(sketch.Points[id].Position.ToString());
+            OnPointAdded?.Invoke();
+        }
+        else
+        {
+            print("failed");
         }
     }
 
@@ -75,10 +76,11 @@ public class SketchEdit : MonoBehaviour
         float SnappedRelativeX = (int)Math.Round((PlaneRelative.x / (SnapSize * ScalingFacor)) * (SnapSize * ScalingFacor) ) ;
         float SnappedRelativeZ = (int)Math.Round((PlaneRelative.z / (SnapSize * ScalingFacor)) * (SnapSize * ScalingFacor) );
 
-        Vector3 SnappedReticlePos = Plane.transform.TransformPoint(SnappedRelativeX, 0, SnappedRelativeZ);
+        Vector3 SnappedAbsPos = Plane.transform.TransformPoint(SnappedRelativeX, 0, SnappedRelativeZ);
+        Vector3 SnappedRelPos = new Vector3(SnappedRelativeX, 0, SnappedRelativeZ);
 
-        absPos = SnappedReticlePos;
-        relPos = PlaneRelative;
+        absPos = SnappedAbsPos;
+        relPos = SnappedRelPos;
 
         return true;
     }
