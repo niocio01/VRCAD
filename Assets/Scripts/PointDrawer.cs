@@ -19,7 +19,7 @@ public class PointDrawer : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        sketch = sketchEditor.sketch;
+        sketch = sketchEditor.Sketch;
         SketchEditor.OnPointAdded += Editor_OnPointAdded;
         currentPointIds = new List<int>();
     }
@@ -38,7 +38,7 @@ public class PointDrawer : MonoBehaviour
         {
             if (!currentPointIds.Contains(point.ID))
             {
-                Vector3 pointPosition = sketchPlane.transform.TransformPoint(point.Position.x, 0, point.Position.y);
+                Vector3 pointPosition = sketchPlane.transform.TransformPoint(point.Position.x, point.Position.y, 0);
                 GameObject createdPoint = Instantiate(pointPrefab, pointPosition, Quaternion.identity, pointParent.transform);
                 currentPointIds.Add(point.ID);
 

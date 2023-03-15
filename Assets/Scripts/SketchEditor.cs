@@ -1,37 +1,48 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.XR.Interaction.Toolkit;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 public class SketchEditor : MonoBehaviour
 {
     public static event Action OnPointAdded;
 
-    [SerializeField] private GameObject Reticle;
+    [SerializeField] private GameObject Reticle_Prefab;
     [SerializeField] private XRRayInteractor RayInteractor;
     [SerializeField] private XRSimpleInteractable Interactable;
     [SerializeField] private XRController Controller;
     [SerializeField] private GameObject Plane;
+    [SerializeField] private GameObject PreviewPointParent;
 
     [SerializeField] bool SnapToGrid;
     [SerializeField] float SnapSize;
 
-    public Sketch sketch;
+    public Sketch Sketch { get; private set; }
+    private GameObject reticle;
 
     private void Awake()
     {
-        sketch = new Sketch();
+        Sketch = new Sketch();
+        reticle = Instantiate(Reticle_Prefab, PreviewPointParent.transform);
+        reticle.GetComponent<Renderer>().enabled = false;
     }
 
     private void Update()
     {
         if (GetPointerPosition(out Vector3 absPos, out Vector3 relPos))
         {
-            Reticle.GetComponent<Renderer>().enabled = true;
-            Reticle.transform.position = absPos;
+            reticle.GetComponent<Renderer>().enabled = true;
+            reticle.transform.position = absPos;
+        }
+        else
+        {
+            reticle.GetComponent<Renderer>().enabled = false;
         }
     }
 
@@ -39,14 +50,14 @@ public class SketchEditor : MonoBehaviour
     {
         if (GetPointerPosition(out Vector3 absPos, out Vector3 relPos))
         {
-            int id = sketch.AddPoint(relPos.x, relPos.z);
+            int id = Sketch.AddPoint(relPos.x, relPos.y);
             print(id);
-            print(sketch.Points[id].Position.ToString());
+            print(Sketch.Points[id].Position.ToString());
             OnPointAdded?.Invoke();
         }
         else
         {
-            print("failed");
+            print("failed to get point on plane position");
         }
     }
 
@@ -73,11 +84,13 @@ public class SketchEditor : MonoBehaviour
         Vector2 TextureScale = Plane.GetComponent<Renderer>().material.mainTextureScale;
         float ScalingFacor = Math.Min(TextureScale.x, TextureScale.y);
 
-        float SnappedRelativeX = (int)Math.Round((PlaneRelative.x / (SnapSize * ScalingFacor)) * (SnapSize * ScalingFacor) ) ;
-        float SnappedRelativeZ = (int)Math.Round((PlaneRelative.z / (SnapSize * ScalingFacor)) * (SnapSize * ScalingFacor) );
+        float SnappedRelativeX = (int)Math.Round((PlaneRelative.x / (double)(SnapSize / ScalingFacor) ), MidpointRounding.AwayFromZero ) * (SnapSize / ScalingFacor);
+        float SnappedRelativeY = (int)Math.Round((PlaneRelative.y / (double)(SnapSize / ScalingFacor) ), MidpointRounding.AwayFromZero) * (SnapSize / ScalingFacor);
 
-        Vector3 SnappedAbsPos = Plane.transform.TransformPoint(SnappedRelativeX, 0, SnappedRelativeZ);
-        Vector3 SnappedRelPos = new Vector3(SnappedRelativeX, 0, SnappedRelativeZ);
+        // print(SnappedRelativeX.ToString() + "   " + SnappedRelativeY.ToString());
+
+        Vector3 SnappedAbsPos = Plane.transform.TransformPoint(SnappedRelativeX, SnappedRelativeY, 0);
+        Vector3 SnappedRelPos = new Vector3(SnappedRelativeX, SnappedRelativeY, 0);
 
         absPos = SnappedAbsPos;
         relPos = SnappedRelPos;

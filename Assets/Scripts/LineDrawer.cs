@@ -17,7 +17,7 @@ public class LineDrawer : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        sketch = sketchEditor.sketch;
+        sketch = sketchEditor.Sketch;
         SketchEditor.OnPointAdded += Editor_OnPointAdded;
         currentLineIds = new List<int>();
     }
