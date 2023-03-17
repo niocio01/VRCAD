@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 
 public class Sketch
 {
@@ -9,7 +9,7 @@ public class Sketch
     public string Name { get; private set; }
 
     [JsonProperty("id")]
-    public int SketchID { get; private set; }
+    public uint SketchID { get; private set; }
 
     [JsonProperty("points")]
     public List<SketchPoint> Points { get; private set; }
@@ -22,15 +22,33 @@ public class Sketch
 
     private uint PointIdCounter = 0;
     private uint LineIdCounter = 0;
-    private uint ConstraintIdCounter = 0;
 
-    public Sketch(int id)
+    [JsonIgnore]
+    public uint ConstraintIdCounter { get; private set; } = 0;
+
+    // constructor
+    public Sketch(uint id)
     {
         Name = "Sketch_" + id.ToString();
         SketchID = id;
         Points = new List<SketchPoint>();
         Lines = new List<SketchLine>();
         Constraints = new List<SketchConstraint>();
+    }
+
+    public SketchPoint GetPoint(uint id)
+    {
+        return Points.Find(p => p.ID == id);
+    }
+
+    public SketchLine GetLine(uint id)
+    {
+        return Lines.Find(l => l.ID == id);
+    }
+
+    public SketchConstraint GetConstraint(uint id)
+    {
+        return Constraints.Find(c => c.ConstraintID == id);
     }
 
     public void AddPoint(Vector2 position)
@@ -61,5 +79,13 @@ public class Sketch
         LineIdCounter++;
 
         return line;
+    }
+
+    public void AddConstraint(SketchConstraint constraint)
+    {
+        if (constraint == null) return;
+        ConstraintIdCounter++;
+        Constraints.Add(constraint);
+        return;
     }
 }

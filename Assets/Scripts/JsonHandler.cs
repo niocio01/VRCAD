@@ -5,17 +5,18 @@ using System.Text;
 using System.IO;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using System.Data;
 
 public class JsonHandler : MonoBehaviour
 {
     // [SerializeField] private SketchEditor sketchEditor;
     public static void JsonSave(Part part)
     {
-        JsonPart jsonPart = Part.Part2JsonPart(part);
         var jsonSerializer = new JsonSerializer();
         jsonSerializer.Converters.Add(new Vec2JsonConverter());
-        jsonSerializer.Converters.Add(new JsonPart2JsonConverter());
-        // jsonSerializer.Converters.Add(new Sketch2JsonCopnverter());
+        jsonSerializer.Converters.Add(new Constraint2JsonConverter());
+        jsonSerializer.Converters.Add(new Part2JsonConverter());
+        jsonSerializer.Converters.Add(new Feature2JsonConverter());
         jsonSerializer.Formatting = Formatting.Indented;
         // jsonSerializer.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
 
@@ -25,14 +26,27 @@ public class JsonHandler : MonoBehaviour
 
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            jsonSerializer.Serialize(writer, jsonPart);
+            jsonSerializer.Serialize(writer, part);
         }
 
         print(jsonString);
     }
 }
 
-public class Vec2JsonConverter : JsonConverter<Vector2>
+internal class Feature2JsonConverter : JsonConverter<Feature>
+{
+    public override Feature ReadJson(JsonReader reader, Type objectType, Feature existingValue, bool hasExistingValue, JsonSerializer serializer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void WriteJson(JsonWriter writer, Feature feature, JsonSerializer serializer)
+    {
+        serializer.Serialize(writer, feature.feature2Jsonfeature());
+    }
+}
+
+internal class Vec2JsonConverter : JsonConverter<Vector2>
 {
     public override Vector2 ReadJson(JsonReader reader, Type objectType, Vector2 existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
@@ -47,62 +61,52 @@ public class Vec2JsonConverter : JsonConverter<Vector2>
         writer.WriteEndArray();
     }
 }
-
-public class JsonPart2JsonConverter : JsonConverter<JsonPart>
+internal class Part2JsonConverter : JsonConverter<Part>
 {
-    public override JsonPart ReadJson(JsonReader reader, Type objectType, JsonPart existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override Part ReadJson(JsonReader reader, Type objectType, Part existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
         throw new NotImplementedException();
     }
 
-    public override void WriteJson(JsonWriter writer, JsonPart value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, Part part, JsonSerializer serializer)
     {
         writer.WriteStartObject();
         writer.WritePropertyName("meta");
-        serializer.Serialize(writer, value.PartInfo);
+        serializer.Serialize(writer, part.PartInfo);
         
 
         writer.WritePropertyName("data");
         writer.WriteStartObject();
         writer.WritePropertyName("sketches");
 
-        serializer.Serialize(writer, value.Sketches);
-
-        //writer.WriteStartObject();
-        //foreach (Sketch sketch in value.Sketches)
-        //{
-        //    writer.WritePropertyName(sketch.Name);
-        //    writer.WriteStartObject();
-        //    writer.WritePropertyName("points");
-        //    serializer.Serialize(writer, sketch.Points);
-        //    writer.WritePropertyName("lines");
-        //    serializer.Serialize(writer, sketch.Lines);
-        //    writer.WritePropertyName("constraints");
-        //    serializer.Serialize(writer, sketch.Constraints);
-        //    writer.WriteEndObject();
-        //}
-        //writer.WriteEndObject();
+        serializer.Serialize(writer, part.Sketches);
 
 
         writer.WritePropertyName("features");
-        serializer.Serialize(writer, value.JsonFeatures);
+        serializer.Serialize(writer, part.Features);
         writer.WriteEndObject();
 
         writer.WriteEndObject();
     }
 }
-
-public class Sketch2JsonCopnverter : JsonConverter<Sketch>
+internal class Constraint2JsonConverter : JsonConverter<SketchConstraint>
 {
-    public override Sketch ReadJson(JsonReader reader, Type objectType, Sketch existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override SketchConstraint ReadJson(JsonReader reader, Type objectType, SketchConstraint existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
         throw new NotImplementedException();
     }
 
-    public override void WriteJson(JsonWriter writer, Sketch value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, SketchConstraint constraint, JsonSerializer serializer)
     {
         writer.WriteStartObject();
-        writer.WritePropertyName(value.Name);
+        writer.WritePropertyName("Type");
+        writer.WriteValue(constraint.Name);
+        writer.WritePropertyName("id");
+        writer.WriteValue(constraint.ConstraintID);
+        writer.WritePropertyName("parentId");
+        writer.WriteValue(constraint.Parent.ID);
+        writer.WritePropertyName("childId");
+        writer.WriteValue(constraint.Child.ID);
         writer.WriteEndObject();
     }
 }

@@ -8,13 +8,19 @@ public class Part
 {
     public PartInfo PartInfo { get; private set; }
 
+    public List<Sketch> Sketches { get; private set; }
+
     public List<Feature> Features {get; private set;}
+
+    public uint SketchIdCounter { get; private set; } = 0;
+    public uint FeatureIdCounter { get; private set; } = 0;
 
     // Constructors
     public Part(string title, string description, string author)
     {
         PartInfo = new PartInfo(title, description, author);
         Features = new List<Feature>();
+        Sketches = new List<Sketch>();
     }
 
     public Part(PartInfo partInfo)
@@ -28,42 +34,13 @@ public class Part
         Features.Add(feature);
     }
 
-    public static JsonPart Part2JsonPart (Part part)
+    public Sketch AddSketch()
     {
-        List<Sketch> allSketches = new List<Sketch>();
-        JsonPart jsonPart = new JsonPart();
-
-
-        foreach (Feature feature in part.Features)
-        {
-            // convert normal feature to Json equivalent and add it to the list of features
-            jsonPart.JsonFeatures.Add(feature.feature2Jsonfeature(feature));
-
-            // go thru the feature and and add all the references sketch id's
-            List<Sketch> sketches = feature.GetAllRefSketches();
-            foreach (Sketch sketch in sketches)
-            {
-                if (!allSketches.Contains(sketch))
-                {
-                    allSketches.Add(sketch);
-                }
-            }
-        }
-
-        jsonPart.PartInfo = part.PartInfo;
-        jsonPart.Sketches = allSketches;
-
-        return jsonPart;
+        Sketch sketch = new Sketch(SketchIdCounter);
+        SketchIdCounter++;
+        Sketches.Add(sketch);
+        return sketch;
     }
-}
-
-public class JsonPart
-{
-    public PartInfo PartInfo;
-
-    public List<Sketch> Sketches;
-
-    public List<JsonFeature> JsonFeatures = new List<JsonFeature>();
 }
 
 public class PartInfo
