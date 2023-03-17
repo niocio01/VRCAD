@@ -12,14 +12,14 @@ public class LineDrawer : MonoBehaviour
 
     public List<GameObject> lineObjects; // used for inspector access
     private Sketch sketch;
-    private List<int> currentLineIds;
+    private List<uint> currentLineIds;
 
     // Start is called before the first frame update
     private void Start()
     {
         sketch = sketchEditor.Sketch;
         SketchEditor.OnPointAdded += Editor_OnPointAdded;
-        currentLineIds = new List<int>();
+        currentLineIds = new List<uint>();
     }
 
     private void Editor_OnPointAdded()

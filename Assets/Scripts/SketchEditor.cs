@@ -28,7 +28,7 @@ public class SketchEditor : MonoBehaviour
 
     private void Awake()
     {
-        Sketch = new Sketch();
+        Sketch = new Sketch(0);
         reticle = Instantiate(Reticle_Prefab, PreviewPointParent.transform);
         reticle.GetComponent<Renderer>().enabled = false;
     }
@@ -50,9 +50,9 @@ public class SketchEditor : MonoBehaviour
     {
         if (GetPointerPosition(out Vector3 absPos, out Vector3 relPos))
         {
-            int id = Sketch.AddPoint(relPos.x, relPos.y);
-            print(id);
-            print(Sketch.Points[id].Position.ToString());
+            SketchPoint point = Sketch.AddPoint(relPos.x, relPos.y);
+            print(point.ID);
+            print(point.Position.ToString());
             OnPointAdded?.Invoke();
         }
         else

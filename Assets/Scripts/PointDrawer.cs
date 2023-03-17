@@ -12,7 +12,7 @@ public class PointDrawer : MonoBehaviour
 
     public List<GameObject> PointsObjets; // used for inspector access
     private Sketch sketch;
-    private List<int> currentPointIds;
+    private List<uint> currentPointIds;
 
 
 
@@ -21,7 +21,7 @@ public class PointDrawer : MonoBehaviour
     {
         sketch = sketchEditor.Sketch;
         SketchEditor.OnPointAdded += Editor_OnPointAdded;
-        currentPointIds = new List<int>();
+        currentPointIds = new List<uint>();
     }
 
     private void Editor_OnPointAdded()

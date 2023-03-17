@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
 
-public class ConstraintBase
+public abstract class ConstraintBase
 {
     private readonly Type ChildT;
     private readonly Type ParentT;

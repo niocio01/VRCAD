@@ -1,13 +1,15 @@
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
 
-public class SketchElement
+public abstract class SketchElement
 {
-    public int ID { protected set; get; }
+    [JsonProperty("id")]
+    public uint ID { protected set; get; }
 
-    public SketchElement(int id)
+    public SketchElement(uint id)
     {
         ID = id;
     }
@@ -15,9 +17,10 @@ public class SketchElement
 
 public class SketchPoint : SketchElement
 {
+    [JsonProperty("position")]
     public Vector2 Position { get; private set; }
 
-    public SketchPoint(Vector2 position, int id) : base(id)
+    public SketchPoint(Vector2 position, uint id) : base(id)
     {
         Position = position;
     }
@@ -25,19 +28,15 @@ public class SketchPoint : SketchElement
 
 public class SketchLine : SketchElement
 {
+    [JsonProperty("pointIDs")]
     public SketchPoint[] Points { get; private set; }
     bool Construction = false;
 
-    public SketchLine(SketchPoint first, SketchPoint second, int id) : base(id)
+    public SketchLine(SketchPoint first, SketchPoint second, uint id, bool constuction = false) : base(id)
     {
         Points = new SketchPoint[2] { first, second };
-        Construction = false;
+        Construction = constuction;
         ID = id;
-    }
-
-    public SketchLine(SketchPoint first, SketchPoint second, bool construction, int id) : this(first, second, id)
-    {
-        Construction = construction;
     }
 }
 
