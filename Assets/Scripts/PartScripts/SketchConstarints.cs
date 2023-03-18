@@ -44,16 +44,16 @@ public class SketchConstraint
 
 public class JsonConstraint
 {
-    [JsonProperty("name")]
+    [JsonProperty("Type")]
     public string Name { get; set; }
 
-    [JsonProperty("id")]
+    [JsonProperty("Id")]
     public uint ConstraintID { get; set; }
 
-    [JsonProperty("parent")]
+    [JsonProperty("Parent")]
     public uint Parent { get; set; }
 
-    [JsonProperty("child")]
+    [JsonProperty("Child")]
     public uint Child { get; set; }
 
     public SketchConstraint ToSketchConstraint(List<SketchPoint> points, List<SketchLine> lines)

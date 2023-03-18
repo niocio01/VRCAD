@@ -74,10 +74,10 @@ public class Part
 }
 public class JsonPart
 {
-    [JsonProperty("meta")]
+    [JsonProperty("Meta")]
     public PartInfo PartInfo { get; set; }
 
-    [JsonProperty("data")]
+    [JsonProperty("Data")]
     public JsonData Data { get; set; } = new JsonData();
 
     // Auxilary
@@ -102,27 +102,27 @@ public class JsonPart
 }
 public class JsonData
 {
-    [JsonProperty("sketches")]
+    [JsonProperty("Sketches")]
     public List<JsonSketch> Sketches { get; set; } = new List<JsonSketch>();
 
-    [JsonProperty("features")]
+    [JsonProperty("Features")]
     public List<JsonFeature> Features { get; set; } = new List<JsonFeature>();
 }
 public class PartInfo
 {
-    [JsonProperty("title")]
+    [JsonProperty("Title")]
     public string Title { get; private set; }
 
-    [JsonProperty("description")]
+    [JsonProperty("Description")]
     public string Description { get; private set; }
 
-    [JsonProperty("author")]
+    [JsonProperty("Author")]
     public string Author { get; private set; }
 
-    [JsonProperty("creation")]
+    [JsonProperty("Creation")]
     public DateTime Creation { get; private set; }
 
-    [JsonProperty("last_edit")]
+    [JsonProperty("LastEdit")]
     public DateTime LastEdit { get; private set; }
 
     // Constructor

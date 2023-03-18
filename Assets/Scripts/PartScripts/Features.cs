@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using JsonSubTypes;
+using UnityEngine.Animations;
 
 public abstract class Feature
 {
     // Properties
-    public uint FeatureID { protected set; get; }
+    public virtual uint FeatureID { protected set; get; }
 
     // Base Constructor
     public Feature(uint id)
@@ -19,15 +20,15 @@ public abstract class Feature
     public abstract JsonFeature ToJsonFeature();
 }
 
-[JsonConverter(typeof(JsonFeature2JsonConverter))]
+// [JsonConverter(typeof(JsonFeature2JsonConverter))]
 public abstract class JsonFeature
 {
     // Properties
-    [JsonProperty("id", Order = -1)]
-    public uint FeatureID { protected set; get; }
+    [JsonProperty("Id", Order = -1)]
+    public virtual uint FeatureID { protected set; get; }
 
-    [JsonProperty("type", Order = -2)]
-    public readonly string Type;
+    [JsonProperty("Type", Order = -2)]
+    public virtual string Type { protected set; get; }
 
     // Base Constructor
     public JsonFeature(string type, uint  id)
@@ -45,32 +46,29 @@ public class Extrude : Feature
     public float ExtrusionHeight { get; private set; }
 
     // Constructor
-    public Extrude(Sketch sketch, float height, uint id) : base(id) {
+    public Extrude(Sketch baseSketch, float height, uint featureID) : base(featureID) {
         
-        BaseSketch = sketch;
+        BaseSketch = baseSketch;
         ExtrusionHeight = height;
     }
 
     // Auxilary
     public override JsonFeature ToJsonFeature()
     {
-        Extrude extrude = this;
-        JsonExtrude jsonFeature = new JsonExtrude(extrude.ExtrusionHeight, extrude.BaseSketch.SketchID, extrude.FeatureID);
-
-        return jsonFeature;
+        return new JsonExtrude(ExtrusionHeight, BaseSketch.SketchID, FeatureID); ;
     }
 }
 public class JsonExtrude : JsonFeature
 {
     // Properties
-    [JsonProperty("baseSketch", Order = 2)]
+    [JsonProperty("BaseSketch", Order = 2)]
     uint BaseSketchID;
 
-    [JsonProperty("extrusionHeight", Order = 3)]
+    [JsonProperty("ExtrusionHeight", Order = 3)]
     float ExtrusionHeight;
 
     // Constructor
-    public JsonExtrude(float extrusionHeight, uint basesketchID, uint featureID) : base("extrude", featureID)
+    public JsonExtrude(float extrusionHeight, uint basesketchID, uint featureID) : base("Extrude", featureID)
     {
         BaseSketchID = basesketchID;
         ExtrusionHeight = extrusionHeight;
@@ -79,7 +77,50 @@ public class JsonExtrude : JsonFeature
     // Auxilary
     public override Feature ToFeature(List<Sketch> sketches)
     {
-        Extrude extrude = new Extrude(sketches.Find(s => s.SketchID == BaseSketchID), ExtrusionHeight, FeatureID);
-        return extrude;
+        return new Extrude(sketches.Find(s => s.SketchID == BaseSketchID), ExtrusionHeight, FeatureID); ;
+    }
+}
+
+
+public class Revolve : Feature
+{
+    // Properties
+    public Sketch BaseSketch { get; private set; }
+    public SketchElementReference Axis { get; private set; }
+
+    // Constructor
+    public Revolve(Sketch baseSketch, SketchLine axis, uint featureId) : base(featureId)
+    {
+        BaseSketch = baseSketch;
+        Axis = new SketchElementReference("Line", baseSketch, axis);
+    }
+
+    // Auxilary
+    public override JsonFeature ToJsonFeature()
+    {
+        return new JsonRevolve(BaseSketch.SketchID, Axis.ToJsonRef(), FeatureID);
+    }
+}
+public class JsonRevolve : JsonFeature
+{
+    // Properties
+    [JsonProperty("BaseSketch", Order = 2)]
+    uint BaseSketchID;
+
+    [JsonProperty("Axis", Order = 3)]
+    JsonSketchElementReference Reference;
+
+    // Constructor
+    public JsonRevolve(uint basesketchID, JsonSketchElementReference reference, uint featureID) : base("Revolve", featureID)
+    {
+        BaseSketchID = basesketchID;
+        Reference = reference;
+    }
+
+    // Auxilary
+    public override Feature ToFeature(List<Sketch> sketches)
+    {
+        SketchElementReference reference = Reference.ToSketchRef(sketches);        
+        return new Revolve(reference.Sketch, (SketchLine)reference.Reference, FeatureID);
     }
 }

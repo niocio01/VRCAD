@@ -87,11 +87,23 @@
             "id": 0,
             "parentId": 0,
             "childId": 1
+          },
+          {
+            "type": "Horizontal",
+            "id": 1,
+            "parentId": 1,
+            "childId": 2
           }
         ]
       }
     ],
     "features": [
+      {
+        "Type": "extrude",
+        "id": 123,
+        "baseSketch": 0,
+        "extrusionHeight": 1.0
+      }
       {
         "Type": "extrude",
         "id": 123,

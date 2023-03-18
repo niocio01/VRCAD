@@ -6,7 +6,7 @@ using UnityEngine;
 
 public abstract class SketchElement
 {
-    [JsonProperty("id")]
+    [JsonProperty("Id")]
     public uint ID { protected set; get; }
 
     public SketchElement(uint id)
@@ -17,7 +17,7 @@ public abstract class SketchElement
 
 public class SketchPoint : SketchElement
 {
-    [JsonProperty("position")]
+    [JsonProperty("Position")]
     public Vector2 Position { get; private set; }
 
     public SketchPoint(Vector2 position, uint id) : base(id)
@@ -28,7 +28,7 @@ public class SketchPoint : SketchElement
 
 public class SketchLine : SketchElement
 {
-    [JsonProperty("pointIDs")]
+    [JsonProperty("PointIDs")]
     public SketchPoint[] Points { get; private set; }
     bool Construction = false;
 
@@ -37,6 +37,58 @@ public class SketchLine : SketchElement
         Points = new SketchPoint[2] { first, second };
         Construction = constuction;
         ID = id;
+    }
+}
+
+public class SketchElementReference
+{
+    public string Type { get; private set; }
+    public Sketch Sketch { get; private set; }
+    public SketchElement Reference { get; private set; }
+
+    public SketchElementReference(string type, Sketch sketch, SketchElement reference)
+    {
+        Type = type;
+        Sketch = sketch;
+        Reference = reference;
+    }
+
+    public JsonSketchElementReference ToJsonRef() 
+    {
+        return new JsonSketchElementReference(Type, Sketch.SketchID, Reference.ID);
+    }
+}
+
+public class JsonSketchElementReference
+{
+    [JsonProperty("Type")]
+    public string Type { get; private set; }
+
+    [JsonProperty("SketchId")]
+    public uint SketchID { get; private set; }
+
+    [JsonProperty("ElementID")]
+    public uint ElementID { get; private set; }
+
+    public JsonSketchElementReference(string type, uint sketchID, uint elementID)
+    {
+        Type = type;
+        SketchID = sketchID;
+        ElementID = elementID;
+    }
+
+    public SketchElementReference ToSketchRef(List<Sketch> sketches)
+    {
+        Sketch sketch = sketches.Find(s => s.SketchID == SketchID);
+
+        SketchElement element = null;
+        switch (Type)
+        {
+            case "Line" : element = sketch.GetLine(ElementID); break;
+            case "Point": element = sketch.GetPoint(ElementID); break;
+        }
+
+        return new SketchElementReference(Type, sketch, element);
     }
 }
 

@@ -109,19 +109,19 @@ public class Sketch
 
 public class JsonSketch
 {
-    [JsonProperty("name")]
+    [JsonProperty("Name")]
     public string Name;
 
-    [JsonProperty("id")]
+    [JsonProperty("Id")]
     public uint SketchID;
 
-    [JsonProperty("points")]
+    [JsonProperty("Points")]
     public List<SketchPoint> Points;
 
-    [JsonProperty("lines")]
+    [JsonProperty("Lines")]
     public List<SketchLine> Lines;
 
-    [JsonProperty("constraints")]
+    [JsonProperty("Constraints")]
     public List<JsonConstraint> Constraints;
 
     // Auxilary
