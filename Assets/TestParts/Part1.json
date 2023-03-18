@@ -1,114 +1,204 @@
 {
-  "meta": {
-    "title": "TestPart",
-    "description": "ForDoingJsonTests",
-    "author": "Nico Zuber",
-    "creation": "2023-03-18T11:38:00.7798074+01:00",
-    "last_edit": "2023-03-18T11:38:00.7798074+01:00"
+  "Meta": {
+    "Title": "TestPart",
+    "Description": "ForDoingJsonTests",
+    "Author": "Nico Zuber",
+    "Creation": "2023-03-18T23:03:59.7113038+01:00",
+    "LastEdit": "2023-03-18T23:03:59.7113038+01:00"
   },
-  "data": {
-    "sketches": [
+  "Data": {
+    "Sketches": [
       {
-        "name": "Sketch_0",
-        "id": 0,
-        "points": [
+        "Name": "Sketch_0",
+        "Id": 0,
+        "Points": [
           {
-            "position": [
-              "3.1415",
-              "1.2345"
+            "Position": [
+              "0",
+              "0"
             ],
-            "id": 0
+            "Id": 0
           },
           {
-            "position": [
+            "Position": [
               "1",
               "0"
             ],
-            "id": 1
+            "Id": 1
           },
           {
-            "position": [
+            "Position": [
               "1",
               "1"
             ],
-            "id": 2
+            "Id": 2
           },
           {
-            "position": [
+            "Position": [
               "0",
               "1"
             ],
-            "id": 3
+            "Id": 3
           }
         ],
-        "lines": [
+        "Lines": [
           {
-            "pointIDs": [
+            "PointIDs": [
               {
-                "position": [
+                "Position": [
                   "0",
                   "0"
                 ],
-                "id": 0
+                "Id": 0
               },
               {
-                "position": [
+                "Position": [
                   "1",
                   "0"
                 ],
-                "id": 1
+                "Id": 1
               }
             ],
-            "id": 0
+            "Id": 0
           },
           {
-            "pointIDs": [
+            "PointIDs": [
               {
-                "position": [
+                "Position": [
                   "1",
                   "0"
                 ],
-                "id": 1
+                "Id": 1
               },
               {
-                "position": [
+                "Position": [
                   "1",
                   "1"
                 ],
-                "id": 2
+                "Id": 2
               }
             ],
-            "id": 1
-          }
-        ],
-        "constraints": [
-          {
-            "type": "Rectangular",
-            "id": 0,
-            "parentId": 0,
-            "childId": 1
+            "Id": 1
           },
           {
-            "type": "Horizontal",
-            "id": 1,
-            "parentId": 1,
-            "childId": 2
+            "PointIDs": [
+              {
+                "Position": [
+                  "1",
+                  "1"
+                ],
+                "Id": 2
+              },
+              {
+                "Position": [
+                  "0",
+                  "1"
+                ],
+                "Id": 3
+              }
+            ],
+            "Id": 2
+          },
+          {
+            "PointIDs": [
+              {
+                "Position": [
+                  "0",
+                  "1"
+                ],
+                "Id": 3
+              },
+              {
+                "Position": [
+                  "0",
+                  "0"
+                ],
+                "Id": 0
+              }
+            ],
+            "Id": 3
+          }
+        ],
+        "Constraints": [
+          {
+            "Type": "Rectangular",
+            "Id": 0,
+            "Parent": 0,
+            "Child": 1
+          },
+          {
+            "Type": "Horizontal",
+            "Id": 1,
+            "Parent": 0,
+            "Child": 1
+          },
+          {
+            "Type": "Vertical",
+            "Id": 2,
+            "Parent": 0,
+            "Child": 3
           }
         ]
+      },
+      {
+        "Name": "Sketch_1",
+        "Id": 1,
+        "Points": [
+          {
+            "Position": [
+              "-1",
+              "-1"
+            ],
+            "Id": 0
+          },
+          {
+            "Position": [
+              "-1",
+              "-2"
+            ],
+            "Id": 1
+          }
+        ],
+        "Lines": [
+          {
+            "PointIDs": [
+              {
+                "Position": [
+                  "-1",
+                  "-1"
+                ],
+                "Id": 0
+              },
+              {
+                "Position": [
+                  "-1",
+                  "-2"
+                ],
+                "Id": 1
+              }
+            ],
+            "Id": 0
+          }
+        ],
+        "Constraints": []
       }
     ],
-    "features": [
+    "Features": [
       {
-        "Type": "extrude",
-        "id": 123,
-        "baseSketch": 0,
-        "extrusionHeight": 1.0
-      }
+        "Type": "Extrude",
+        "Id": 0,
+        "BaseSketch": 0,
+        "ExtrusionHeight": 0.55
+      },
       {
-        "Type": "extrude",
-        "id": 123,
-        "baseSketch": 0,
-        "extrusionHeight": 1.0
+        "Type": "Revolve",
+        "Id": 1,
+        "BaseSketch": 0,
+        "Axis": {
+          "Type": "Line",
+          "SketchId": 0,
+          "ElementID": 2
+        }
       }
     ]
   }
