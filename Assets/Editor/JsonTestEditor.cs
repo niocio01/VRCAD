@@ -15,5 +15,10 @@ public class JsonTestEditor : Editor
         {
             JsonTestScript.PrintTestJson();
         }
+
+        if (GUILayout.Button("Read Json string"))
+        {
+            JsonTestScript.ReadJson();
+        }
     }
 }

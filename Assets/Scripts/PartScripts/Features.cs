@@ -2,9 +2,11 @@ using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using JsonSubTypes;
 
 public abstract class Feature
 {
+    // Properties
     public uint FeatureID { protected set; get; }
 
     // Base Constructor
@@ -12,71 +14,72 @@ public abstract class Feature
     {
         FeatureID = id;
     }
-    
-    public abstract List<Sketch> GetAllRefSketches();
 
-    public abstract JsonFeature feature2Jsonfeature();
+    // Auxilary
+    public abstract JsonFeature ToJsonFeature();
 }
 
+[JsonConverter(typeof(JsonFeature2JsonConverter))]
 public abstract class JsonFeature
 {
+    // Properties
     [JsonProperty("id", Order = -1)]
     public uint FeatureID { protected set; get; }
 
     [JsonProperty("type", Order = -2)]
-    public readonly string Name;
+    public readonly string Type;
 
     // Base Constructor
-    public JsonFeature(string name, uint  id)
+    public JsonFeature(string type, uint  id)
     {
-        Name = name;
+        Type = type;
         FeatureID = id;
     }
-
-    public abstract Feature JsonFeature2Feature();
+    public abstract Feature ToFeature(List<Sketch> sketches);
 }
 
 public class Extrude : Feature
 {
+    // Properties
     public Sketch BaseSketch { get; private set; }
     public float ExtrusionHeight { get; private set; }
 
-    public Extrude(Sketch sketch, int height, uint id) : base(id) {
+    // Constructor
+    public Extrude(Sketch sketch, float height, uint id) : base(id) {
         
         BaseSketch = sketch;
         ExtrusionHeight = height;
     }
 
-    public override List<Sketch> GetAllRefSketches()
-    {
-        return new List<Sketch> { BaseSketch };
-    }
-
-    public override JsonFeature feature2Jsonfeature()
+    // Auxilary
+    public override JsonFeature ToJsonFeature()
     {
         Extrude extrude = this;
-        Extrude_Json jsonFeature = new Extrude_Json(extrude.ExtrusionHeight, extrude.BaseSketch.SketchID, extrude.FeatureID);
+        JsonExtrude jsonFeature = new JsonExtrude(extrude.ExtrusionHeight, extrude.BaseSketch.SketchID, extrude.FeatureID);
 
         return jsonFeature;
     }
 }
-
-public class Extrude_Json : JsonFeature
+public class JsonExtrude : JsonFeature
 {
+    // Properties
     [JsonProperty("baseSketch", Order = 2)]
     uint BaseSketchID;
 
     [JsonProperty("extrusionHeight", Order = 3)]
     float ExtrusionHeight;
 
-    public Extrude_Json(float extrusionHeight, uint basesketchID, uint featureID) : base("extrude", featureID)
+    // Constructor
+    public JsonExtrude(float extrusionHeight, uint basesketchID, uint featureID) : base("extrude", featureID)
     {
         BaseSketchID = basesketchID;
         ExtrusionHeight = extrusionHeight;
     }
 
-    public override Feature JsonFeature2Feature()
+    // Auxilary
+    public override Feature ToFeature(List<Sketch> sketches)
     {
-        throw new System.NotImplementedException();
+        Extrude extrude = new Extrude(sketches.Find(s => s.SketchID == BaseSketchID), ExtrusionHeight, FeatureID);
+        return extrude;
     }
 }

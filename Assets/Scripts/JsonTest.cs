@@ -9,7 +9,8 @@ public class JsonTest : MonoBehaviour
     {
         testPart = new Part("TestPart", "ForDoingJsonTests", "Nico Zuber");
 
-        Sketch sketch = testPart.AddSketch();
+        Sketch sketch = new Sketch(0);
+        testPart.AddSketch(sketch);
         sketch.AddPoint(0, 0);
         sketch.AddPoint(1, 0);
         sketch.AddPoint(1, 1);
@@ -24,11 +25,16 @@ public class JsonTest : MonoBehaviour
 
         testPart.AddFeature(testExtrude);
     }
-
     public void PrintTestJson()
     {
         InitTestSketchObject();
 
         JsonHandler.JsonSave(testPart);
+    }
+
+    [SerializeField] TextAsset jsonFile;
+    public void ReadJson()
+    {
+        JsonHandler.JsonLoad(jsonFile);
     }
 }

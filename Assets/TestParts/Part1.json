@@ -1,0 +1,103 @@
+{
+  "meta": {
+    "title": "TestPart",
+    "description": "ForDoingJsonTests",
+    "author": "Nico Zuber",
+    "creation": "2023-03-18T11:38:00.7798074+01:00",
+    "last_edit": "2023-03-18T11:38:00.7798074+01:00"
+  },
+  "data": {
+    "sketches": [
+      {
+        "name": "Sketch_0",
+        "id": 0,
+        "points": [
+          {
+            "position": [
+              "3.1415",
+              "1.2345"
+            ],
+            "id": 0
+          },
+          {
+            "position": [
+              "1",
+              "0"
+            ],
+            "id": 1
+          },
+          {
+            "position": [
+              "1",
+              "1"
+            ],
+            "id": 2
+          },
+          {
+            "position": [
+              "0",
+              "1"
+            ],
+            "id": 3
+          }
+        ],
+        "lines": [
+          {
+            "pointIDs": [
+              {
+                "position": [
+                  "0",
+                  "0"
+                ],
+                "id": 0
+              },
+              {
+                "position": [
+                  "1",
+                  "0"
+                ],
+                "id": 1
+              }
+            ],
+            "id": 0
+          },
+          {
+            "pointIDs": [
+              {
+                "position": [
+                  "1",
+                  "0"
+                ],
+                "id": 1
+              },
+              {
+                "position": [
+                  "1",
+                  "1"
+                ],
+                "id": 2
+              }
+            ],
+            "id": 1
+          }
+        ],
+        "constraints": [
+          {
+            "type": "Rectangular",
+            "id": 0,
+            "parentId": 0,
+            "childId": 1
+          }
+        ]
+      }
+    ],
+    "features": [
+      {
+        "Type": "extrude",
+        "id": 123,
+        "baseSketch": 0,
+        "extrusionHeight": 1.0
+      }
+    ]
+  }
+}

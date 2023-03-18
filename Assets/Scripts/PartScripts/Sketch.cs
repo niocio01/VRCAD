@@ -5,28 +5,19 @@ using System;
 
 public class Sketch
 {
-    [JsonProperty("name")]
+    // Properties
     public string Name { get; private set; }
-
-    [JsonProperty("id")]
     public uint SketchID { get; private set; }
-
-    [JsonProperty("points")]
     public List<SketchPoint> Points { get; private set; }
-
-    [JsonProperty("lines")]
     public List<SketchLine> Lines { get; private set; }
-
-    [JsonProperty("constraints")]
     public List<SketchConstraint> Constraints { get; private set; }
 
-    private uint PointIdCounter = 0;
-    private uint LineIdCounter = 0;
-
-    [JsonIgnore]
+    // Counters
+    public uint PointIdCounter { get; private set; } = 0;
+    public uint LineIdCounter { get; private set; } = 0;
     public uint ConstraintIdCounter { get; private set; } = 0;
 
-    // constructor
+    // Constructor
     public Sketch(uint id)
     {
         Name = "Sketch_" + id.ToString();
@@ -36,26 +27,21 @@ public class Sketch
         Constraints = new List<SketchConstraint>();
     }
 
+    // Get Elements
     public SketchPoint GetPoint(uint id)
     {
         return Points.Find(p => p.ID == id);
     }
-
     public SketchLine GetLine(uint id)
     {
         return Lines.Find(l => l.ID == id);
     }
-
     public SketchConstraint GetConstraint(uint id)
     {
         return Constraints.Find(c => c.ConstraintID == id);
     }
 
-    public void AddPoint(Vector2 position)
-    {
-        Points.Add(new SketchPoint(position, PointIdCounter));
-        PointIdCounter++;
-    }
+    // Add Elements
     public SketchPoint AddPoint(float x, float y)
     {
         SketchPoint point = new SketchPoint(new Vector2(x, y), PointIdCounter);
@@ -63,7 +49,6 @@ public class Sketch
         PointIdCounter++;
         return point;
     }
-
     public SketchLine AddLine(uint firstID, uint secondID, bool construction = false) 
     {
         if (firstID == secondID) return null;
@@ -80,12 +65,78 @@ public class Sketch
 
         return line;
     }
-
     public void AddConstraint(SketchConstraint constraint)
     {
         if (constraint == null) return;
         ConstraintIdCounter++;
         Constraints.Add(constraint);
         return;
+    }
+
+    // Set Lists
+    public void SetPoints(List<SketchPoint> points)
+    {
+        Points = points;
+    }
+    public void SetLines(List<SketchLine> lines)
+    {
+        Lines = lines; 
+    }
+    public void SetConstraints(List<SketchConstraint> constraints)
+    {
+        Constraints = constraints;
+    }
+
+    // Auxilary
+    public JsonSketch ToJsonSketch()
+    {
+        JsonSketch jsonSketch = new JsonSketch();
+        jsonSketch.Name = Name;
+        jsonSketch.SketchID = SketchID;
+        jsonSketch.Points = Points;
+        jsonSketch.Lines = Lines;
+
+        List<JsonConstraint> jsonConstraints = new List<JsonConstraint>();
+        foreach (SketchConstraint sketchConstraint in Constraints)
+        {
+            jsonConstraints.Add(sketchConstraint.ToJsonConstraint());
+        }
+        jsonSketch.Constraints = jsonConstraints;
+
+        return jsonSketch;
+    }
+}
+
+public class JsonSketch
+{
+    [JsonProperty("name")]
+    public string Name;
+
+    [JsonProperty("id")]
+    public uint SketchID;
+
+    [JsonProperty("points")]
+    public List<SketchPoint> Points;
+
+    [JsonProperty("lines")]
+    public List<SketchLine> Lines;
+
+    [JsonProperty("constraints")]
+    public List<JsonConstraint> Constraints;
+
+    // Auxilary
+    public Sketch ToSketch()
+    {
+        Sketch sketch = new Sketch(SketchID);
+        sketch.SetPoints(Points);
+        sketch.SetLines(Lines);
+
+        List<SketchConstraint> sketchConstraints = new List<SketchConstraint>();
+        foreach(JsonConstraint jsonConstraint in Constraints)
+        {
+            sketchConstraints.Add(jsonConstraint.ToSketchConstraint(sketch.Points, sketch.Lines));
+        }
+
+        return sketch;
     }
 }

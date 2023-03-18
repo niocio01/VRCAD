@@ -6,43 +6,77 @@ using System.IO;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using System.Data;
+using Palmmedia.ReportGenerator.Core.Common;
+using JsonSerializer = Newtonsoft.Json.JsonSerializer;
+using Newtonsoft.Json.Linq;
+using JsonSubTypes;
+using UnityEngine.Analytics;
 
 public class JsonHandler : MonoBehaviour
 {
-    // [SerializeField] private SketchEditor sketchEditor;
     public static void JsonSave(Part part)
     {
-        var jsonSerializer = new JsonSerializer();
-        jsonSerializer.Converters.Add(new Vec2JsonConverter());
-        jsonSerializer.Converters.Add(new Constraint2JsonConverter());
-        jsonSerializer.Converters.Add(new Part2JsonConverter());
-        jsonSerializer.Converters.Add(new Feature2JsonConverter());
-        jsonSerializer.Formatting = Formatting.Indented;
-        // jsonSerializer.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-
+        JsonSerializer serializer = new JsonSerializer();
+        serializer.Converters.Add(new Vec2JsonConverter());
+        // serializer.Converters.Add(new JsonFeature2JsonConverter());
+        serializer.Formatting = Formatting.Indented;
 
         StringBuilder jsonString = new StringBuilder();
         StringWriter sw = new StringWriter(jsonString);
 
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            jsonSerializer.Serialize(writer, part);
+            serializer.Serialize(writer, part.ToJsonPart());
         }
 
         print(jsonString);
     }
+    public static void JsonLoad(TextAsset jsonAsset) 
+    {
+        JsonSerializer serializer = new JsonSerializer();
+        serializer.Converters.Add(new Vec2JsonConverter());
+        serializer.Converters.Add(new JsonFeature2JsonConverter());
+
+        TextReader textReader = new StringReader(jsonAsset.ToString());
+        using (JsonTextReader JsonReader = new JsonTextReader(textReader))
+        {
+            JsonPart Jsonpart = serializer.Deserialize<JsonPart>(JsonReader); 
+            print(Jsonpart);
+
+            Part part = Jsonpart.ToPart();
+            print(part);
+        }
+
+    }
 }
 
-internal class Feature2JsonConverter : JsonConverter<Feature>
+public class JsonFeature2JsonConverter : JsonConverter<JsonFeature>
 {
-    public override Feature ReadJson(JsonReader reader, Type objectType, Feature existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override JsonFeature ReadJson(JsonReader reader, Type objectType, JsonFeature existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
-        throw new NotImplementedException();
-    }
+        JObject jsonObject = JObject.Load(reader);
+        uint id = jsonObject["id"].Value<uint>();
 
-    public override void WriteJson(JsonWriter writer, Feature feature, JsonSerializer serializer)
+        JsonFeature jsonFeature;
+
+        string type = jsonObject["Type"].Value<string>();
+
+        switch(type)
+        {
+            case "extrude" :
+            {
+                uint sketchID = jsonObject["baseSketch"].Value<uint>();
+                float height = jsonObject["extrusionHeight"].Value<float>();
+                jsonFeature = new JsonExtrude(height, sketchID, id);
+                return jsonFeature;
+            }
+        }
+
+        return null;
+    }
+    public override void WriteJson(JsonWriter writer, JsonFeature feature, JsonSerializer serializer)
     {
-        serializer.Serialize(writer, feature.feature2Jsonfeature());
+        serializer.Serialize(writer, feature);
     }
 }
 
@@ -50,63 +84,23 @@ internal class Vec2JsonConverter : JsonConverter<Vector2>
 {
     public override Vector2 ReadJson(JsonReader reader, Type objectType, Vector2 existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
-        return new Vector2(0, 0);
-    }
+        if (reader.TokenType != JsonToken.StartArray)
+            throw new JsonException("Expected ArrayStart token");
 
+        float x = (float)reader.ReadAsDouble();
+        float y = (float)reader.ReadAsDouble();
+
+        reader.Read();
+        if(reader.TokenType != JsonToken.EndArray)
+            throw new JsonException("Expected ArrayEnd token");
+
+        return new Vector2(x, y);            
+    }
     public override void WriteJson(JsonWriter writer, Vector2 value, JsonSerializer serializer)
     {
         writer.WriteStartArray();
         writer.WriteValue(value.x.ToString());
         writer.WriteValue(value.y.ToString());
         writer.WriteEndArray();
-    }
-}
-internal class Part2JsonConverter : JsonConverter<Part>
-{
-    public override Part ReadJson(JsonReader reader, Type objectType, Part existingValue, bool hasExistingValue, JsonSerializer serializer)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override void WriteJson(JsonWriter writer, Part part, JsonSerializer serializer)
-    {
-        writer.WriteStartObject();
-        writer.WritePropertyName("meta");
-        serializer.Serialize(writer, part.PartInfo);
-        
-
-        writer.WritePropertyName("data");
-        writer.WriteStartObject();
-        writer.WritePropertyName("sketches");
-
-        serializer.Serialize(writer, part.Sketches);
-
-
-        writer.WritePropertyName("features");
-        serializer.Serialize(writer, part.Features);
-        writer.WriteEndObject();
-
-        writer.WriteEndObject();
-    }
-}
-internal class Constraint2JsonConverter : JsonConverter<SketchConstraint>
-{
-    public override SketchConstraint ReadJson(JsonReader reader, Type objectType, SketchConstraint existingValue, bool hasExistingValue, JsonSerializer serializer)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override void WriteJson(JsonWriter writer, SketchConstraint constraint, JsonSerializer serializer)
-    {
-        writer.WriteStartObject();
-        writer.WritePropertyName("Type");
-        writer.WriteValue(constraint.Name);
-        writer.WritePropertyName("id");
-        writer.WriteValue(constraint.ConstraintID);
-        writer.WritePropertyName("parentId");
-        writer.WriteValue(constraint.Parent.ID);
-        writer.WritePropertyName("childId");
-        writer.WriteValue(constraint.Child.ID);
-        writer.WriteEndObject();
     }
 }
