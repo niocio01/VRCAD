@@ -19,6 +19,8 @@ public class SketchEditor : MonoBehaviour
     [SerializeField] private XRController Controller;
     [SerializeField] private GameObject Plane;
     [SerializeField] private GameObject PreviewPointParent;
+    [SerializeField] private PointDrawer PointDrawer;
+    [SerializeField] private LineDrawer LineDrawer;
 
     [SerializeField] bool SnapToGrid;
     [SerializeField] float SnapSize;
@@ -28,7 +30,6 @@ public class SketchEditor : MonoBehaviour
 
     private void Awake()
     {
-        Sketch = new Sketch(0);
         reticle = Instantiate(Reticle_Prefab, PreviewPointParent.transform);
         reticle.GetComponent<Renderer>().enabled = false;
     }
@@ -44,6 +45,12 @@ public class SketchEditor : MonoBehaviour
         {
             reticle.GetComponent<Renderer>().enabled = false;
         }
+    }
+
+    public void SetSketch(Sketch sketch)
+    {
+        Sketch = sketch;
+        PointDrawer.SetSketch(sketch);
     }
 
     public void AddPoint()

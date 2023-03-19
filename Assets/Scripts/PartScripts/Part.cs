@@ -12,25 +12,25 @@ public class Part
     public List<Feature> Features {get; private set;}
 
     // Counters
-    public uint SketchIdCounter { get; private set; } = 0;
-    public uint FeatureIdCounter { get; private set; } = 0;
+    public uint SketchIdCounter { get; private set; }
+    public uint FeatureIdCounter { get; private set; }
 
     // Constructors
     public Part() 
     {
+        SketchIdCounter = 0;
+        FeatureIdCounter = 0;
+
         Features = new List<Feature>();
-        Sketches = new List<Sketch>();
+        Sketches = new List<Sketch>();        
     }
-    public Part(string title, string description, string author)
+    public Part(string title, string description, string author) : this()
     {
         PartInfo = new PartInfo(title, description, author);
-        Features = new List<Feature>();
-        Sketches = new List<Sketch>();
     }    
-    public Part(PartInfo partInfo)
+    public Part(PartInfo partInfo) : this()
     {
         PartInfo = partInfo;
-        Features = new List<Feature>();
     }
 
     // Add Elements

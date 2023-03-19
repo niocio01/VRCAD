@@ -7,11 +7,11 @@ public class PointDrawer : MonoBehaviour
     [SerializeField] private GameObject pointPrefab;
     [SerializeField] private GameObject pointParent;
     [SerializeField] private GameObject sketchPlane;
-    [SerializeField] private SketchEditor sketchEditor;
+    [SerializeField] private SketchEditor SketchEditor;
     
 
-    public List<GameObject> PointsObjets; // used for inspector access
-    private Sketch sketch;
+    public List<GameObject> PointsObjets;
+    private Sketch Sketch;
     private List<uint> currentPointIds;
 
 
@@ -19,9 +19,25 @@ public class PointDrawer : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        sketch = sketchEditor.Sketch;
         SketchEditor.OnPointAdded += Editor_OnPointAdded;
         currentPointIds = new List<uint>();
+    }
+
+    public void SetSketch(Sketch sketch)
+    {
+        Sketch = sketch;
+        DestroyAll();
+        DrawPoints();
+    }
+
+    private void DestroyAll()
+    {
+        foreach (GameObject point in PointsObjets)
+        {
+            Destroy(point);
+        }
+        PointsObjets.Clear();
+        currentPointIds.Clear();
     }
 
     private void Editor_OnPointAdded()
@@ -29,12 +45,11 @@ public class PointDrawer : MonoBehaviour
         DrawPoints();
     }
 
-    // Update is called once per frame
     void DrawPoints()
     {
-        print("Points: " + sketch.Points.Count.ToString() );
+        print("Points: " + Sketch.Points.Count.ToString() );
 
-        foreach (SketchPoint point in sketch.Points)
+        foreach (SketchPoint point in Sketch.Points)
         {
             if (!currentPointIds.Contains(point.ID))
             {

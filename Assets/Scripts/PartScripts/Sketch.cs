@@ -19,9 +19,11 @@ public class Sketch
     public uint ConstraintIdCounter { get; private set; } = 0;
 
     // Constructor
-    public Sketch(uint id)
+    public Sketch(uint id, string name = "")
     {
-        Name = "Sketch_" + id.ToString();
+        if (name == "") Name = "Sketch_" + id.ToString();
+        else Name = name;
+
         SketchID = id;
         Points = new List<SketchPoint>();
         Lines = new List<SketchLine>();

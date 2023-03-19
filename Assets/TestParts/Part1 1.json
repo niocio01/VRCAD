@@ -1,0 +1,43 @@
+{
+  "Meta": {
+    "Title": "EditorTest",
+    "Description": "Made VR Editor",
+    "Author": "Nico Zuber",
+    "Creation": "2023-03-19T16:35:03.6331581+01:00",
+    "LastEdit": "2023-03-19T16:35:03.6331581+01:00"
+  },
+  "Data": {
+    "Sketches": [
+      {
+        "Name": "Default",
+        "Id": 0,
+        "Points": [
+          {
+            "Position": [
+              "0",
+              "0.2"
+            ],
+            "Id": 0
+          },
+          {
+            "Position": [
+              "0.2",
+              "0"
+            ],
+            "Id": 1
+          },
+          {
+            "Position": [
+              "-0.2",
+              "0"
+            ],
+            "Id": 2
+          }
+        ],
+        "Lines": [],
+        "Constraints": []
+      }
+    ],
+    "Features": []
+  }
+}

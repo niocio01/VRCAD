@@ -31,7 +31,7 @@ public class JsonHandler : MonoBehaviour
 
         print(jsonString);
     }
-    public static void JsonLoad(TextAsset jsonAsset) 
+    public static Part JsonLoad(TextAsset jsonAsset) 
     {
         JsonSerializer serializer = new JsonSerializer();
         serializer.Converters.Add(new Vec2JsonConverter());
@@ -40,13 +40,10 @@ public class JsonHandler : MonoBehaviour
         TextReader textReader = new StringReader(jsonAsset.ToString());
         using (JsonTextReader JsonReader = new JsonTextReader(textReader))
         {
-            JsonPart Jsonpart = serializer.Deserialize<JsonPart>(JsonReader); 
-            print(Jsonpart);
+            JsonPart Jsonpart = serializer.Deserialize<JsonPart>(JsonReader);
 
-            Part part = Jsonpart.ToPart();
-            print(part);
+            return Jsonpart.ToPart();
         }
-
     }
 }
 
