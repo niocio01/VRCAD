@@ -109,7 +109,13 @@ public class Sketch
         jsonSketch.Name = Name;
         jsonSketch.SketchID = SketchID;
         jsonSketch.Points = Points;
-        jsonSketch.Lines = Lines;
+
+        List<JsonSketchLine> jsonSketchLines = new List<JsonSketchLine>();
+        foreach (SketchLine line in Lines)
+        {
+            jsonSketchLines.Add(line.ToJsonLine());
+        }
+        jsonSketch.Lines = jsonSketchLines;
 
         List<JsonConstraint> jsonConstraints = new List<JsonConstraint>();
         foreach (SketchConstraint sketchConstraint in Constraints)
@@ -134,7 +140,7 @@ public class JsonSketch
     public List<SketchPoint> Points;
 
     [JsonProperty("Lines")]
-    public List<SketchLine> Lines;
+    public List<JsonSketchLine> Lines;
 
     [JsonProperty("Constraints")]
     public List<JsonConstraint> Constraints;
@@ -144,7 +150,13 @@ public class JsonSketch
     {
         Sketch sketch = new Sketch(SketchID);
         sketch.SetPoints(Points);
-        sketch.SetLines(Lines);
+
+        List<SketchLine> sketchLines = new List<SketchLine>();
+        foreach(JsonSketchLine line in Lines)
+        {
+            sketchLines.Add(line.ToSketchLine(Points));
+        }
+        sketch.SetLines(sketchLines);
 
         List<SketchConstraint> sketchConstraints = new List<SketchConstraint>();
         foreach(JsonConstraint jsonConstraint in Constraints)

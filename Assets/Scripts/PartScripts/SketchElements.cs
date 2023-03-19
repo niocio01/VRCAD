@@ -18,7 +18,6 @@ public abstract class SketchElement
 
 public class SketchPoint : SketchElement
 {
-    [JsonProperty("Position")]
     public Vector2 Position { get; private set; }
 
     public SketchPoint(Vector2 position, uint id) : base(id)
@@ -29,7 +28,6 @@ public class SketchPoint : SketchElement
 
 public class SketchLine : SketchElement
 {
-    [JsonProperty("PointIDs")]
     public SketchPoint[] Points { get; private set; }
     bool Construction = false;
 
@@ -39,7 +37,37 @@ public class SketchLine : SketchElement
         Construction = constuction;
         ID = id;
     }
+
+    public JsonSketchLine ToJsonLine()
+    {
+        return new JsonSketchLine(Points[0].ID, Points[1].ID, ID, Construction);
+    }
 }
+
+public class JsonSketchLine
+{
+    [JsonProperty("Id")]
+    public uint LineID;
+
+    [JsonProperty("PointIDs")]
+    public uint[] Points;
+
+    [JsonProperty("Construction")]
+    public bool Construction = false;
+
+    public JsonSketchLine(uint firstId, uint secondId, uint lineId, bool constuction = false)
+    {
+        LineID = lineId;
+        Points = new uint[] { firstId, secondId };
+        Construction = constuction;
+    }
+
+    public SketchLine ToSketchLine(List<SketchPoint> points)
+    {
+        return new SketchLine(points.Find(p => p.ID == Points[0]), points.Find(p => p.ID == Points[1]), LineID, Construction);
+    }
+}
+
 
 public class SketchElementReference
 {
