@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -67,7 +68,7 @@ public class JsonSketchElementReference
     [JsonProperty("SketchId")]
     public uint SketchID { get; private set; }
 
-    [JsonProperty("ElementID")]
+    [JsonProperty("ElementId")]
     public uint ElementID { get; private set; }
 
     public JsonSketchElementReference(string type, uint sketchID, uint elementID)
@@ -89,6 +90,15 @@ public class JsonSketchElementReference
         }
 
         return new SketchElementReference(Type, sketch, element);
+    }
+
+    public static JsonSketchElementReference Deserialize(JObject jsonObject)
+    {
+        string type = jsonObject["Type"].Value<string>();
+        uint sketchId = jsonObject["SketchId"].Value<uint>();
+        uint elementID = jsonObject["ElementId"].Value<uint>();
+
+        return new JsonSketchElementReference(type, sketchId, elementID);
     }
 }
 

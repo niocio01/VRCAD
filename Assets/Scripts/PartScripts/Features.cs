@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using JsonSubTypes;
 using UnityEngine.Animations;
+using Newtonsoft.Json.Linq;
 
 public abstract class Feature
 {
@@ -20,7 +21,6 @@ public abstract class Feature
     public abstract JsonFeature ToJsonFeature();
 }
 
-// [JsonConverter(typeof(JsonFeature2JsonConverter))]
 public abstract class JsonFeature
 {
     // Properties
@@ -79,6 +79,13 @@ public class JsonExtrude : JsonFeature
     {
         return new Extrude(sketches.Find(s => s.SketchID == BaseSketchID), ExtrusionHeight, FeatureID); ;
     }
+    public static JsonExtrude Deserialize(JObject jsonObject)
+    {
+        uint featureId = jsonObject["Id"].Value<uint>();
+        uint sketchId = jsonObject["BaseSketch"].Value<uint>();
+        float height = jsonObject["ExtrusionHeight"].Value<float>();
+        return new JsonExtrude(height, sketchId, featureId);
+    }
 }
 
 
@@ -122,5 +129,13 @@ public class JsonRevolve : JsonFeature
     {
         SketchElementReference reference = Reference.ToSketchRef(sketches);        
         return new Revolve(reference.Sketch, (SketchLine)reference.Reference, FeatureID);
+    }
+
+    public static JsonRevolve Deserialize(JObject jsonObject)
+    {
+        uint featureId = jsonObject["Id"].Value<uint>();
+        uint sketchId = jsonObject["BaseSketch"].Value<uint>();
+        JsonSketchElementReference reference = JsonSketchElementReference.Deserialize((JObject)jsonObject["Axis"]);
+        return new JsonRevolve(sketchId, reference, featureId);
     }
 }

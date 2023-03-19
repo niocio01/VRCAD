@@ -55,24 +55,23 @@ public class JsonFeature2JsonConverter : JsonConverter<JsonFeature>
     public override JsonFeature ReadJson(JsonReader reader, Type objectType, JsonFeature existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
         JObject jsonObject = JObject.Load(reader);
-        uint id = jsonObject["id"].Value<uint>();
-
-        JsonFeature jsonFeature;
 
         string type = jsonObject["Type"].Value<string>();
 
         switch(type)
         {
-            case "extrude" :
+            case "Extrude" :
             {
-                uint sketchID = jsonObject["baseSketch"].Value<uint>();
-                float height = jsonObject["extrusionHeight"].Value<float>();
-                jsonFeature = new JsonExtrude(height, sketchID, id);
-                return jsonFeature;
+                    return JsonExtrude.Deserialize(jsonObject);
             }
-        }
 
-        return null;
+            case "Revolve":
+            {
+                    return JsonRevolve.Deserialize(jsonObject);
+                }
+
+            default: throw new JsonException("Unknown feature type: " + type); 
+        }
     }
     public override void WriteJson(JsonWriter writer, JsonFeature feature, JsonSerializer serializer)
     {
