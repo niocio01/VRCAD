@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 public class Sketch
 {
@@ -77,14 +78,26 @@ public class Sketch
     public void SetPoints(List<SketchPoint> points)
     {
         Points = points;
+        if (Points.Count > 0)
+        {
+            PointIdCounter = Points.Max(p => p.ID) + 1;
+        }
     }
     public void SetLines(List<SketchLine> lines)
     {
-        Lines = lines; 
+        Lines = lines;
+        if (Lines.Count > 0)
+        {
+            LineIdCounter = Lines.Max(l => l.ID) + 1;
+        }
     }
     public void SetConstraints(List<SketchConstraint> constraints)
     {
         Constraints = constraints;
+        if (Constraints.Count > 0)
+        {
+            ConstraintIdCounter = Constraints.Max(c => c.ConstraintID) + 1;
+        }
     }
 
     // Auxilary
@@ -136,6 +149,7 @@ public class JsonSketch
         {
             sketchConstraints.Add(jsonConstraint.ToSketchConstraint(sketch.Points, sketch.Lines));
         }
+        sketch.SetConstraints(sketchConstraints);
 
         return sketch;
     }
