@@ -10,39 +10,56 @@ public class LineDrawer : MonoBehaviour
     [SerializeField] private SketchEditor sketchEditor;
     
 
-    public List<GameObject> lineObjects; // used for inspector access
-    private Sketch sketch;
-    private List<uint> currentLineIds;
+    public List<GameObject> LineObjects;
+    private Sketch Sketch;
+    private List<uint> CurrentLineIds;
 
     // Start is called before the first frame update
     private void Start()
     {
-        sketch = sketchEditor.Sketch;
         SketchEditor.OnPointAdded += Editor_OnPointAdded;
-        currentLineIds = new List<uint>();
+        CurrentLineIds = new List<uint>();
+    }
+
+    public void SetSketch(Sketch sketch)
+    {
+        Sketch = sketch;
+        DestroyAll();
+        DrawLines();
+    }
+
+    private void DestroyAll()
+    {
+        foreach (GameObject point in LineObjects)
+        {
+            Destroy(point);
+        }
+        LineObjects.Clear();
+        CurrentLineIds.Clear();
     }
 
     private void Editor_OnPointAdded()
     {
-        DrawPoints();
+        DrawLines();
     }
 
     // Update is called once per frame
-    void DrawPoints()
+    void DrawLines()
     {
-        print("Points: " + sketch.Points.Count.ToString() );
-
-        foreach (SketchLine line in sketch.Lines)
+        foreach (SketchLine line in Sketch.Lines)
         {
-            if (!currentLineIds.Contains(line.ID))
+            if (!CurrentLineIds.Contains(line.ID))
             {
-                Vector3 lineStart = sketchPlane.transform.TransformPoint(line.Points[0].Position.x, 0, line.Points[0].Position.y);
-                Vector3 lineEnd = sketchPlane.transform.TransformPoint(line.Points[1].Position.x, 0, line.Points[1].Position.y);
+                Vector3 lineStart = sketchPlane.transform.TransformPoint(line.Points[0].Position.x, line.Points[0].Position.y, 0);
+                Vector3 lineEnd = sketchPlane.transform.TransformPoint(line.Points[1].Position.x, line.Points[1].Position.y, 0);
 
-                LineController createdLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, lineParent.transform).GetComponent<LineController>();
-                currentLineIds.Add(line.ID);
+                GameObject createdLineObject = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, lineParent.transform);
+                LineController createdLine = createdLineObject.GetComponent<LineController>();
+                createdLine.SetPoints(lineStart, lineEnd);
 
-                // lineObjects.Add(createdLine);
+                CurrentLineIds.Add(line.ID);
+
+                LineObjects.Add(createdLineObject);
             }
         }
     }

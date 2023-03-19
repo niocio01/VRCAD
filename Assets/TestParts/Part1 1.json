@@ -34,7 +34,32 @@
             "Id": 2
           }
         ],
-        "Lines": [],
+        "Lines": [
+          {
+            "Id": 0,
+            "PointIDs": [
+              0,
+              1
+            ],
+            "Construction": false
+          },
+          {
+            "Id": 1,
+            "PointIDs": [
+              1,
+              2
+            ],
+            "Construction": false
+          },
+          {
+            "Id": 2,
+            "PointIDs": [
+              2,
+              0
+            ],
+            "Construction": true
+          }          
+        ],
         "Constraints": []
       }
     ],

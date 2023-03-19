@@ -51,6 +51,7 @@ public class SketchEditor : MonoBehaviour
     {
         Sketch = sketch;
         PointDrawer.SetSketch(sketch);
+        LineDrawer.SetSketch(sketch);
     }
 
     public void AddPoint()

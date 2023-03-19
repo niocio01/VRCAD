@@ -3,14 +3,8 @@ using Newtonsoft.Json;
 using System;
 using System.Text;
 using System.IO;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using System.Data;
-using Palmmedia.ReportGenerator.Core.Common;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 using Newtonsoft.Json.Linq;
-using JsonSubTypes;
-using UnityEngine.Analytics;
 
 public class JsonHandler : MonoBehaviour
 {

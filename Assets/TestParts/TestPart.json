@@ -3,8 +3,8 @@
     "Title": "TestPart",
     "Description": "ForDoingJsonTests",
     "Author": "Nico Zuber",
-    "Creation": "2023-03-18T23:03:59.7113038+01:00",
-    "LastEdit": "2023-03-18T23:03:59.7113038+01:00"
+    "Creation": "2023-03-19T19:53:31.2574918+01:00",
+    "LastEdit": "2023-03-19T19:53:31.2574918+01:00"
   },
   "Data": {
     "Sketches": [
@@ -43,80 +43,36 @@
         ],
         "Lines": [
           {
+            "Id": 0,
             "PointIDs": [
-              {
-                "Position": [
-                  "0",
-                  "0"
-                ],
-                "Id": 0
-              },
-              {
-                "Position": [
-                  "1",
-                  "0"
-                ],
-                "Id": 1
-              }
+              0,
+              1
             ],
-            "Id": 0
+            "Construction": false
           },
           {
+            "Id": 1,
             "PointIDs": [
-              {
-                "Position": [
-                  "1",
-                  "0"
-                ],
-                "Id": 1
-              },
-              {
-                "Position": [
-                  "1",
-                  "1"
-                ],
-                "Id": 2
-              }
+              1,
+              2
             ],
-            "Id": 1
+            "Construction": false
           },
           {
+            "Id": 2,
             "PointIDs": [
-              {
-                "Position": [
-                  "1",
-                  "1"
-                ],
-                "Id": 2
-              },
-              {
-                "Position": [
-                  "0",
-                  "1"
-                ],
-                "Id": 3
-              }
+              2,
+              3
             ],
-            "Id": 2
+            "Construction": false
           },
           {
+            "Id": 3,
             "PointIDs": [
-              {
-                "Position": [
-                  "0",
-                  "1"
-                ],
-                "Id": 3
-              },
-              {
-                "Position": [
-                  "0",
-                  "0"
-                ],
-                "Id": 0
-              }
+              3,
+              0
             ],
-            "Id": 3
+            "Construction": false
           }
         ],
         "Constraints": [
@@ -161,23 +117,12 @@
         ],
         "Lines": [
           {
+            "Id": 0,
             "PointIDs": [
-              {
-                "Position": [
-                  "-1",
-                  "-1"
-                ],
-                "Id": 0
-              },
-              {
-                "Position": [
-                  "-1",
-                  "-2"
-                ],
-                "Id": 1
-              }
+              0,
+              1
             ],
-            "Id": 0
+            "Construction": true
           }
         ],
         "Constraints": []

@@ -12,7 +12,7 @@ public class PointDrawer : MonoBehaviour
 
     public List<GameObject> PointsObjets;
     private Sketch Sketch;
-    private List<uint> currentPointIds;
+    private List<uint> CurrentPointIds;
 
 
 
@@ -20,7 +20,7 @@ public class PointDrawer : MonoBehaviour
     private void Start()
     {
         SketchEditor.OnPointAdded += Editor_OnPointAdded;
-        currentPointIds = new List<uint>();
+        CurrentPointIds = new List<uint>();
     }
 
     public void SetSketch(Sketch sketch)
@@ -37,7 +37,7 @@ public class PointDrawer : MonoBehaviour
             Destroy(point);
         }
         PointsObjets.Clear();
-        currentPointIds.Clear();
+        CurrentPointIds.Clear();
     }
 
     private void Editor_OnPointAdded()
@@ -47,15 +47,13 @@ public class PointDrawer : MonoBehaviour
 
     void DrawPoints()
     {
-        print("Points: " + Sketch.Points.Count.ToString() );
-
         foreach (SketchPoint point in Sketch.Points)
         {
-            if (!currentPointIds.Contains(point.ID))
+            if (!CurrentPointIds.Contains(point.ID))
             {
                 Vector3 pointPosition = sketchPlane.transform.TransformPoint(point.Position.x, point.Position.y, 0);
                 GameObject createdPoint = Instantiate(pointPrefab, pointPosition, Quaternion.identity, pointParent.transform);
-                currentPointIds.Add(point.ID);
+                CurrentPointIds.Add(point.ID);
 
                 PointsObjets.Add(createdPoint);
             }
