@@ -6,6 +6,9 @@ using System.Linq;
 
 public class Sketch
 {
+    public static event Action OnPointAdded;
+    public static event Action OnLineAdded;
+
     // Properties
     public string Name { get; private set; }
     public uint SketchID { get; private set; }
@@ -50,6 +53,8 @@ public class Sketch
         SketchPoint point = new SketchPoint(new Vector2(x, y), PointIdCounter);
         Points.Add(point);
         PointIdCounter++;
+
+        OnPointAdded?.Invoke();
         return point;
     }
     public SketchLine AddLine(uint firstID, uint secondID, bool construction = false) 
@@ -65,6 +70,22 @@ public class Sketch
         SketchLine line = new SketchLine(first, second, LineIdCounter, construction);
         Lines.Add(line);
         LineIdCounter++;
+
+        OnLineAdded?.Invoke();
+
+        return line;
+    }
+
+    public SketchLine AddLine(SketchPoint first, SketchPoint second, bool construction = false)
+    {
+        if (first == second) return null;
+        if (first == null) return null;
+        if (first == null) return null;
+
+        SketchLine line = new SketchLine(first, second, LineIdCounter, construction);
+        Lines.Add(line);
+        LineIdCounter++;
+        OnLineAdded?.Invoke();
 
         return line;
     }

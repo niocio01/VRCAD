@@ -5,14 +5,12 @@ using UnityEngine;
 public class LineController : MonoBehaviour
 {
     private LineRenderer lineRenderer;
-    private Vector3[] points;
+    private Vector3[] points = new Vector3[2];
 
     private void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.positionCount = 0;
-
-        points = new Vector3[2];
     }
 
     public void SetPoints(Vector3 first, Vector3 second)

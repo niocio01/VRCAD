@@ -8,22 +8,23 @@ public class LineDrawer : MonoBehaviour
     [SerializeField] private GameObject lineParent;
     [SerializeField] private GameObject sketchPlane;
     [SerializeField] private SketchEditor sketchEditor;
-    
+
 
     public List<GameObject> LineObjects;
-    private Sketch Sketch;
+    private Sketch Sketch = null;
     private List<uint> CurrentLineIds;
 
     // Start is called before the first frame update
-    private void Start()
+    private void Awake()
     {
-        SketchEditor.OnPointAdded += Editor_OnPointAdded;
+        LineObjects = new List<GameObject>();
         CurrentLineIds = new List<uint>();
     }
 
     public void SetSketch(Sketch sketch)
     {
         Sketch = sketch;
+        Sketch.OnLineAdded += Editor_OnLineAdded;
         DestroyAll();
         DrawLines();
     }
@@ -38,7 +39,7 @@ public class LineDrawer : MonoBehaviour
         CurrentLineIds.Clear();
     }
 
-    private void Editor_OnPointAdded()
+    private void Editor_OnLineAdded()
     {
         DrawLines();
     }

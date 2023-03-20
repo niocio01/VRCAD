@@ -17,9 +17,9 @@ public class PointDrawer : MonoBehaviour
 
 
     // Start is called before the first frame update
-    private void Start()
+    private void Awake()
     {
-        SketchEditor.OnPointAdded += Editor_OnPointAdded;
+        Sketch.OnPointAdded += Editor_OnPointAdded;
         CurrentPointIds = new List<uint>();
     }
 
