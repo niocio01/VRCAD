@@ -1,7 +1,7 @@
 # VRCAD
 VR based parametric CAD program using Unity.
 
-I just started learning Unity, so it's prebabbly not very efficient or well built.
+I just started learning Unity...
 
 Using:
 - Unity 2022.2.10
