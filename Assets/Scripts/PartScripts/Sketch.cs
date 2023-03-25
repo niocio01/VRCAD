@@ -16,11 +16,16 @@ public class Sketch
     public List<SketchLine> Lines { get; private set; }
     public List<SketchLine> ConstructionLines { get; private set; }
     public List<SketchConstraint> Constraints { get; private set; }
+    public Transform Transform { get; private set; }
 
     // Counters
     public uint PointIdCounter { get; private set; } = 0;
     public uint LineIdCounter { get; private set; } = 0;
     public uint ConstraintIdCounter { get; private set; } = 0;
+
+    // Geometry
+    public Vector2[] EdgeVertices { get; private set; }
+    public int[] Triangles { get; private set; }
 
     // Constructor
     public Sketch(uint id, string name = "")
@@ -147,6 +152,12 @@ public class Sketch
     }
 
     // Auxilary
+
+    /// <summary>
+    /// checks if the SketchLines form a closed loop.
+    /// Also reorders the list and flips reversed lines
+    /// </summary>
+    /// <returns>true, if closed</returns>
     public bool HullIsClosed()
     {
 
@@ -165,34 +176,29 @@ public class Sketch
         SketchLine current = first;
         newList.Add(current);
 
-        uint currentEnd = 1;
         SketchLine next = null;
 
         int length = oldList.Count;
 
         for (int i = 0; i < length; i++)
         {
-            next = oldList.Find(line => line.Points[0] == current.Points[currentEnd]);
+            next = oldList.Find(line => line.Points[0] == current.Points[1]);
             if (next != null)
             {
-                string message = (i + ": " + current.Points[currentEnd].Position.ToString() + " -> " + next.Points[0].Position.ToString());
-
                 // remove from list to speed up searching...
                 oldList.Remove(next);
-                newList.Add(current);
-                currentEnd = 1;
+                newList.Add(next);
                 current = next; 
                 continue;
             }
 
-            next = oldList.Find(l => l.Points[1] == current.Points[currentEnd]);
+            next = oldList.Find(l => l.Points[1] == current.Points[1]);
             if (next != null)
             {
-                string message = (i + ": " + current.Points[currentEnd].Position.ToString() + " -> " + next.Points[1].Position.ToString());
-
+                // remove from list to speed up searching...
                 oldList.Remove(next);
-                newList.Add(current);
-                currentEnd = 0;
+                // reverse the line
+                newList.Add(new SketchLine(next.Points[1], next.Points[0], next.ID));
                 current = next;
                 continue;
             }
@@ -201,16 +207,30 @@ public class Sketch
             return false;
         }
 
-        if (next.Points[currentEnd] == first.Points[0])
+        if (newList.Last().Points[1] == first.Points[0])
         {
             Lines = newList;
             return true;
-        }
-            
-
+        }  
         return false;
     }
+    public void UpdateVertices()
+    {
+        EdgeVertices = new Vector2[Lines.Count];
 
+        for (int i = 0; i < Lines.Count; i++)
+        {
+            EdgeVertices[i] = Lines[i].Points[0].Position;
+        }
+    }
+    public bool UpdateTriangles()
+    {
+        if(!Triangulation.Triangulate(EdgeVertices, out int[] triangles, out string errorMessage))
+            return false;
+        
+        Triangles = triangles;
+        return true;
+    }
     public JsonSketch ToJsonSketch()
     {
         JsonSketch jsonSketch = new JsonSketch();

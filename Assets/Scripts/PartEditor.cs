@@ -14,6 +14,8 @@ public class PartEditor : MonoBehaviour
 {
     [SerializeField] TextAsset JsonFile;
     [SerializeField] private SketchEditor SketchEditor;
+    [SerializeField] private GameObject MeshParent;
+    [SerializeField] private MeshDrawer MeshDrawer;
 
     public Part Part { get; private set; }
     private EditMode_t EditMode = EditMode_t.None;
@@ -50,6 +52,8 @@ public class PartEditor : MonoBehaviour
                     if (SketchEditor.AcceptPressed())
                     {
                         EditMode = EditMode_t.None;
+
+                        MeshDrawer.UpdateMesh();
                     }
                 } break;
             case EditMode_t.Feature: break;

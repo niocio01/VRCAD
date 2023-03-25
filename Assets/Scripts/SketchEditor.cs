@@ -124,12 +124,15 @@ public class SketchEditor : MonoBehaviour
     {
         if (Sketch.HullIsClosed())
         {
-            
             print("Sketch is closed. Leaving sketch.");
+
+            Sketch.UpdateVertices();
+            Sketch.UpdateTriangles();
+
             return true;
         }
         print("Sketch is not closed. Cannot Accept.");
-        return true;
+        return false;
     }
 
     public bool CancelPressed()

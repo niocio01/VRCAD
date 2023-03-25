@@ -307,6 +307,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   JsonFile: {fileID: 4900000, guid: f51cffbd04ccfa643b9849d73c49b6a0, type: 3}
   SketchEditor: {fileID: 8868266589702979925}
+  MeshParent: {fileID: 826415530}
+  MeshDrawer: {fileID: 826415533}
 --- !u!1 &11051024 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8758423527188247893, guid: 5b158b94c373d4b4f9e98cdb92789343,
@@ -1943,13 +1945,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
+      - m_Target: {fileID: 7127984}
+        m_TargetAssemblyTypeName: PartEditor, Assembly-CSharp
+        m_MethodName: AcceptPressed
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2262,6 +2264,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 826415531}
+  - component: {fileID: 826415532}
+  - component: {fileID: 826415533}
   m_Layer: 0
   m_Name: Geometry
   m_TagString: Untagged
@@ -2284,6 +2288,63 @@ Transform:
   m_Father: {fileID: 669187544}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &826415532
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 826415530}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 140702d7394df08488ebb79c19558b6b, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &826415533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 826415530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2e5f011f3701054787f660734b28469, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PartEditor: {fileID: 7127984}
+  MeshRenderer: {fileID: 826415532}
+  SketchPlane: {fileID: 7538010476104925180}
 --- !u!1 &870453916
 GameObject:
   m_ObjectHideFlags: 0
@@ -2625,7 +2686,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2017862844}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7127984}
+        m_TargetAssemblyTypeName: PartEditor, Assembly-CSharp
+        m_MethodName: CancelPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1187120370
 GameObject:
   m_ObjectHideFlags: 0
