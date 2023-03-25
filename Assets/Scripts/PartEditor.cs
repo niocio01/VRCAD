@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public enum EditMode
+public enum EditMode_t
 {
     None,
     Sketch,
@@ -13,13 +13,12 @@ public enum EditMode
 public class PartEditor : MonoBehaviour
 {
     [SerializeField] TextAsset JsonFile;
-    [SerializeField] GameObject SketchEditorObject;
-    // [SerializeField] GameObject FeatureEditor;
+    [SerializeField] private SketchEditor SketchEditor;
 
     public Part Part { get; private set; }
-    private EditMode editMode = EditMode.None;
+    private EditMode_t EditMode = EditMode_t.None;
 
-    private GameObject sketchEditor;
+    
     public Feature CurrentFeature { get; private set; }
 
     private void Start()
@@ -28,26 +27,43 @@ public class PartEditor : MonoBehaviour
         {
             Part = new Part("EditorTest", "Made VR Editor", "Nico Zuber");
             Part.AddSketch(new Sketch(0, "Default"));
-            StartEditSketch(Part.Sketches.First());
+            SketchEditor.StartEditSketch(Part.Sketches.First());
         }
         else
         {
             Part = JsonHandler.JsonLoad(JsonFile);
-            StartEditSketch(Part.Sketches.First());
+
+            if (SketchEditor.StartEditSketch(Part.Sketches.First()))
+            {
+                EditMode = EditMode_t.Sketch;
+            }
         }
     }
 
-    private void StartEditSketch(Sketch sketch)
+    public void AcceptPressed()
     {
-        if (sketch == null) return;
-        if (editMode != EditMode.None) return;
+        switch (EditMode)
+        {
+            case EditMode_t.None: break;
+            case EditMode_t.Sketch:
+                {
+                    if (SketchEditor.AcceptPressed())
+                    {
+                        EditMode = EditMode_t.None;
+                    }
+                } break;
+            case EditMode_t.Feature: break;
+        }
+    }
 
-        editMode = EditMode.Sketch;
-
-        SketchEditor editor = SketchEditorObject.GetComponent<SketchEditor>();
-        editor.SetSketch(sketch);
-
-        SketchEditorObject.SetActive(true);
+    public void CancelPressed()
+    {
+        switch (EditMode)
+        {
+            case EditMode_t.None: break;
+            case EditMode_t.Sketch: break;
+            case EditMode_t.Feature: break;
+        }
     }
 
     public void PrintJson()

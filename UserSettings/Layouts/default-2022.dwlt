@@ -19,8 +19,8 @@ MonoBehaviour:
     width: 2752
     height: 1068.8
   m_ShowMode: 4
-  m_Title: Hierarchy
-  m_RootView: {fileID: 7}
+  m_Title: Project
+  m_RootView: {fileID: 9}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
   m_Maximized: 1
@@ -75,8 +75,8 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 100}
   m_MaxSize: {x: 8096, y: 16192}
   vertical: 1
-  controlID: 19
---- !u!114 &4
+  controlID: 163
+--- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -458,23 +458,23 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts
+    - Assets/_Habrador Computational Geometry Library/4. Triangulation/Ear Clipping
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Scripts
+  - Assets/_Habrador Computational Geometry Library/4. Triangulation/Ear Clipping
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Users\nzube\Documents\05_Programming\VRCAD
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 18680000
-    m_LastClickedID: 26648
-    m_ExpandedIDs: 00000000fe6500001868000042680000f67b0000d2830000d4830000d683000000ca9a3bffffff7f
+    m_SelectedIDs: 60690000
+    m_LastClickedID: 26976
+    m_ExpandedIDs: 00000000f0680000f2680000f4680000f6680000f8680000fa680000166900004869000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -502,7 +502,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000fe6500000066000002660000
+    m_ExpandedIDs: 00000000f0680000f2680000f4680000f6680000f8680000fa680000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -530,18 +530,18 @@ MonoBehaviour:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
     m_HadKeyboardFocusLastEvent: 1
-    m_ExpandedInstanceIDs: c62300000000000072800000aa7b0000
+    m_ExpandedInstanceIDs: c62300000000000072800000aa7b00002a660000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: SketchTools
-      m_OriginalName: SketchTools
+      m_Name: Marching squares
+      m_OriginalName: Marching squares
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 34312
+      m_UserData: 26978
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
       m_OriginalEventType: 0
@@ -644,9 +644,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 
+      m_SelectedIDs: 52180000
       m_LastClickedID: 0
-      m_ExpandedIDs: 9a46feffa846feffb01affff701cffff942bffff962cffff26fbffffbe630000e4630000f4630000066400000e6400004c640000586400006264000072640000766400008c640000
+      m_ExpandedIDs: 26fbffff42660000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -988,9 +988,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 0.97001284, y: 0.748031, z: 0.15500006}
+    m_Target: {x: 2.0121913, y: 0.42757413, z: -0.46631014}
     speed: 2
-    m_Value: {x: 0.97001284, y: 0.748031, z: 0.15500006}
+    m_Value: {x: 2.0121913, y: 0.42757413, z: -0.46631014}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1036,13 +1036,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.061475076, y: -0.7680163, z: 0.07457665, w: -0.63309574}
+    m_Target: {x: -0.13860849, y: -0.6933893, z: 0.13860874, w: -0.6933901}
     speed: 2
-    m_Value: {x: -0.061475076, y: -0.7680163, z: 0.07457665, w: -0.63309574}
+    m_Value: {x: -0.13860828, y: -0.6933882, z: 0.13860853, w: -0.693389}
   m_Size:
-    m_Target: 0.29154766
+    m_Target: 0.8126431
     speed: 2
-    m_Value: 0.29154766
+    m_Value: 0.8126431
   m_Ortho:
     m_Target: 0
     speed: 2

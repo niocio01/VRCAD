@@ -32,6 +32,13 @@
               "0"
             ],
             "Id": 2
+          },
+          {
+            "Position": [
+              "0",
+              "0"
+            ],
+            "Id": 3
           }
         ],
         "Lines": [
@@ -57,8 +64,16 @@
               2,
               0
             ],
+            "Construction": false
+          },
+          {
+            "Id": 3,
+            "PointIDs": [
+              0,
+              3
+            ],
             "Construction": true
-          }          
+          }               
         ],
         "Constraints": []
       }

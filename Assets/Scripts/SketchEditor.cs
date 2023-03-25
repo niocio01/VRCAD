@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Unity.VisualScripting;
+using UnityEditorInternal;
 using UnityEditorInternal.VR;
 using UnityEngine;
 using UnityEngine.Events;
@@ -67,6 +68,15 @@ public class SketchEditor : MonoBehaviour
         LineDrawer.SetSketch(sketch);
     }
 
+    public bool StartEditSketch(Sketch sketch)
+    {
+        if (sketch == null) return false;
+
+        SetSketch(sketch);
+
+        return true;
+    }
+
     public void SelectEntered()
     {
         switch (CurrentTool) 
@@ -108,6 +118,23 @@ public class SketchEditor : MonoBehaviour
             case "CircleTool": CurrentTool= SketchTools.Circle; break;
             default: print("unknown Sketch Tool selected:" + toolName); break;
         }
+    }
+
+    public bool AcceptPressed()
+    {
+        if (Sketch.HullIsClosed())
+        {
+            
+            print("Sketch is closed. Leaving sketch.");
+            return true;
+        }
+        print("Sketch is not closed. Cannot Accept.");
+        return true;
+    }
+
+    public bool CancelPressed()
+    {
+        return true;
     }
 
     public bool GetPointerPosition(out Vector3 absPos, out Vector3 relPos)

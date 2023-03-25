@@ -29,18 +29,16 @@ public class SketchPoint : SketchElement
 public class SketchLine : SketchElement
 {
     public SketchPoint[] Points { get; private set; }
-    bool Construction = false;
 
-    public SketchLine(SketchPoint first, SketchPoint second, uint id, bool constuction = false) : base(id)
+    public SketchLine(SketchPoint first, SketchPoint second, uint id) : base(id)
     {
         Points = new SketchPoint[2] { first, second };
-        Construction = constuction;
         ID = id;
     }
 
-    public JsonSketchLine ToJsonLine()
+    public JsonSketchLine ToJsonLine(bool construction)
     {
-        return new JsonSketchLine(Points[0].ID, Points[1].ID, ID, Construction);
+        return new JsonSketchLine(Points[0].ID, Points[1].ID, ID, construction);
     }
 }
 
@@ -62,9 +60,10 @@ public class JsonSketchLine
         Construction = constuction;
     }
 
-    public SketchLine ToSketchLine(List<SketchPoint> points)
+    public SketchLine ToSketchLine(List<SketchPoint> points, out bool construction)
     {
-        return new SketchLine(points.Find(p => p.ID == Points[0]), points.Find(p => p.ID == Points[1]), LineID, Construction);
+        construction = Construction;
+        return new SketchLine(points.Find(p => p.ID == Points[0]), points.Find(p => p.ID == Points[1]), LineID);
     }
 }
 

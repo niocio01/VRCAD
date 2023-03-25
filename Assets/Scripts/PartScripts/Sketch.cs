@@ -14,6 +14,7 @@ public class Sketch
     public uint SketchID { get; private set; }
     public List<SketchPoint> Points { get; private set; }
     public List<SketchLine> Lines { get; private set; }
+    public List<SketchLine> ConstructionLines { get; private set; }
     public List<SketchConstraint> Constraints { get; private set; }
 
     // Counters
@@ -67,8 +68,15 @@ public class Sketch
         SketchPoint second = Points.Find(x => x.ID == secondID);
         if (first == null) return null;
 
-        SketchLine line = new SketchLine(first, second, LineIdCounter, construction);
-        Lines.Add(line);
+        SketchLine line = new SketchLine(first, second, LineIdCounter);
+        if(construction)
+        {
+            ConstructionLines.Add(line);
+        }
+        else
+        {
+            Lines.Add(line);
+        }        
         LineIdCounter++;
 
         OnLineAdded?.Invoke();
@@ -82,8 +90,15 @@ public class Sketch
         if (first == null) return null;
         if (first == null) return null;
 
-        SketchLine line = new SketchLine(first, second, LineIdCounter, construction);
-        Lines.Add(line);
+        SketchLine line = new SketchLine(first, second, LineIdCounter);
+        if (construction)
+        {
+            ConstructionLines.Add(line);
+        }
+        else
+        {
+            Lines.Add(line);
+        }
         LineIdCounter++;
         OnLineAdded?.Invoke();
 
@@ -106,12 +121,20 @@ public class Sketch
             PointIdCounter = Points.Max(p => p.ID) + 1;
         }
     }
-    public void SetLines(List<SketchLine> lines)
+    public void SetLines(List<SketchLine> lines, bool construction = false)
     {
-        Lines = lines;
+        if (construction)
+        {
+            ConstructionLines = lines;
+        }
+        else
+        {
+            Lines = lines;
+        }
+
         if (Lines.Count > 0)
         {
-            LineIdCounter = Lines.Max(l => l.ID) + 1;
+            LineIdCounter = Math.Max( Lines.Max(l => l.ID) , LineIdCounter) + 1;
         }
     }
     public void SetConstraints(List<SketchConstraint> constraints)
@@ -124,6 +147,70 @@ public class Sketch
     }
 
     // Auxilary
+    public bool HullIsClosed()
+    {
+
+        // create new list and add Elements in the order of the path to speed up processing
+        // when accessing function the next time
+        List<SketchLine> newList = new List<SketchLine>();
+
+        // make copy of current list, and only override it if all went smoothly...
+        List<SketchLine> oldList = new List<SketchLine>(Lines);
+
+        SketchLine first = oldList.First();
+
+        // remove first, since its not a valid choice
+        oldList.Remove(first);
+
+        SketchLine current = first;
+        newList.Add(current);
+
+        uint currentEnd = 1;
+        SketchLine next = null;
+
+        int length = oldList.Count;
+
+        for (int i = 0; i < length; i++)
+        {
+            next = oldList.Find(line => line.Points[0] == current.Points[currentEnd]);
+            if (next != null)
+            {
+                string message = (i + ": " + current.Points[currentEnd].Position.ToString() + " -> " + next.Points[0].Position.ToString());
+
+                // remove from list to speed up searching...
+                oldList.Remove(next);
+                newList.Add(current);
+                currentEnd = 1;
+                current = next; 
+                continue;
+            }
+
+            next = oldList.Find(l => l.Points[1] == current.Points[currentEnd]);
+            if (next != null)
+            {
+                string message = (i + ": " + current.Points[currentEnd].Position.ToString() + " -> " + next.Points[1].Position.ToString());
+
+                oldList.Remove(next);
+                newList.Add(current);
+                currentEnd = 0;
+                current = next;
+                continue;
+            }
+
+            // no matching line found
+            return false;
+        }
+
+        if (next.Points[currentEnd] == first.Points[0])
+        {
+            Lines = newList;
+            return true;
+        }
+            
+
+        return false;
+    }
+
     public JsonSketch ToJsonSketch()
     {
         JsonSketch jsonSketch = new JsonSketch();
@@ -134,7 +221,12 @@ public class Sketch
         List<JsonSketchLine> jsonSketchLines = new List<JsonSketchLine>();
         foreach (SketchLine line in Lines)
         {
-            jsonSketchLines.Add(line.ToJsonLine());
+            jsonSketchLines.Add(line.ToJsonLine(false));
+        }
+       
+        foreach (SketchLine Cline in ConstructionLines)
+        {
+            jsonSketchLines.Add(Cline.ToJsonLine(true));
         }
         jsonSketch.Lines = jsonSketchLines;
 
@@ -173,11 +265,24 @@ public class JsonSketch
         sketch.SetPoints(Points);
 
         List<SketchLine> sketchLines = new List<SketchLine>();
-        foreach(JsonSketchLine line in Lines)
+        List<SketchLine> C_sketchLines = new List<SketchLine>();
+        foreach (JsonSketchLine jsonLine in Lines)
         {
-            sketchLines.Add(line.ToSketchLine(Points));
+            SketchLine line = jsonLine.ToSketchLine(Points, out bool construction);
+
+            if (construction)
+            {
+                C_sketchLines.Add(line);
+            }
+            else
+            {                
+                sketchLines.Add(line);
+            }
+
         }
+
         sketch.SetLines(sketchLines);
+        sketch.SetLines(C_sketchLines, true);
 
         List<SketchConstraint> sketchConstraints = new List<SketchConstraint>();
         foreach(JsonConstraint jsonConstraint in Constraints)
