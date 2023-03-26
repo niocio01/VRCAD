@@ -22,6 +22,8 @@ public enum SketchTools
 public class SketchEditor : MonoBehaviour
 {
     [SerializeField] public GameObject SketchPlane;
+    [SerializeField] public GameObject SketchToolsObject;
+
 
     [SerializeField] private GameObject Reticle_Prefab;
     [SerializeField] private XRRayInteractor RayInteractor;
@@ -61,13 +63,22 @@ public class SketchEditor : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        SketchToolsObject.SetActive(false);
+    }
+
+    private void OnEnable()
+    {
+        SketchToolsObject.SetActive(true);
+    }
+
     public void SetSketch(Sketch sketch)
     {
         Sketch = sketch;
         PointDrawer.SetSketch(sketch);
         LineDrawer.SetSketch(sketch);
     }
-
     public bool StartEditSketch(Sketch sketch)
     {
         if (sketch == null) return false;
@@ -76,7 +87,6 @@ public class SketchEditor : MonoBehaviour
 
         return true;
     }
-
     public void SelectEntered()
     {
         switch (CurrentTool) 
@@ -85,7 +95,6 @@ public class SketchEditor : MonoBehaviour
             case SketchTools.Line: LineTool.AddPoint(); break;
         }
     }
-
     public void AddPoint()
     {
         if (GetPointerPosition(out Vector3 absPos, out Vector3 relPos))
@@ -99,7 +108,6 @@ public class SketchEditor : MonoBehaviour
             print("failed to get point on plane position");
         }
     }
-
     public void SetTool(string toolName)
     {
         // Deselect old Tool
@@ -119,7 +127,6 @@ public class SketchEditor : MonoBehaviour
             default: print("unknown Sketch Tool selected:" + toolName); break;
         }
     }
-
     public bool AcceptPressed()
     {
         if (Sketch.HullIsClosed())
@@ -134,12 +141,10 @@ public class SketchEditor : MonoBehaviour
         print("Sketch is not closed. Cannot Accept.");
         return false;
     }
-
     public bool CancelPressed()
     {
         return true;
     }
-
     public bool GetPointerPosition(out Vector3 absPos, out Vector3 relPos)
     {
         RayInteractor.TryGetHitInfo(out Vector3 reticlePosition, out _, out _, out bool isValid);

@@ -51,9 +51,12 @@ public class LineTool : MonoBehaviour
         else
         {
             SketchPoint endPoint = SketchEditor.Sketch.AddPoint(relPos.x, relPos.y);
+            SketchPoint startPoint = StartPoint;
 
-            SketchEditor.Sketch.AddLine(StartPoint, endPoint);
             StartPoint = endPoint;
+
+            SketchEditor.Sketch.AddLine(startPoint, endPoint);
+            
         }
     }
     public void EndLine()

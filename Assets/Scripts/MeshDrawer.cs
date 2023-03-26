@@ -1,3 +1,5 @@
+using Habrador_Computational_Geometry;
+using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ public class MeshDrawer : MonoBehaviour
     
     [SerializeField] private PartEditor PartEditor;
     [SerializeField] private MeshRenderer MeshRenderer;
-    [SerializeField] private GameObject SketchPlane;
+    [SerializeField] private GameObject MeshParent;
 
     private Mesh Mesh;
     private void Awake()
@@ -21,18 +23,17 @@ public class MeshDrawer : MonoBehaviour
     public void UpdateMesh()
     {
         Sketch sketch = PartEditor.Part.Sketches.FirstOrDefault();
-        Vector2[] vertices2D = sketch.EdgeVertices;
-        Transform PlaneTransform = SketchPlane.transform;
-        Vector3[] vertices3D = System.Array.ConvertAll<Vector2, Vector3>(vertices2D, v => v);
-        vertices3D = System.Array.ConvertAll<Vector2, Vector3>(vertices2D, v => PlaneTransform.TransformPoint(v));
 
-        Color[] colors = Enumerable.Range(0, vertices3D.Length)
+        Mesh temp = _TransformBetweenDataStructures.Triangles2ToMesh(sketch.Triangulation, true);
+        // TestAlgorithmsHelpMethods.DisplayMeshWithRandomColors(Mesh, 0);
+        
+
+        Mesh.vertices = temp.vertices;
+        Mesh.triangles = temp.triangles;
+
+        Color[] colors = Enumerable.Range(0, Mesh.vertices.Length)
             .Select(i => Random.ColorHSV())
             .ToArray();
-
-
-        Mesh.vertices = vertices3D;
-        Mesh.triangles = sketch.Triangles;
         Mesh.colors = colors;
 
         Mesh.RecalculateNormals();

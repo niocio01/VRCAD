@@ -18,6 +18,12 @@ namespace Habrador_Computational_Geometry
             this.y = y;
         }
 
+        public MyVector2(Vector2 vector)
+        {
+            this.x = vector.x;
+            this.y = vector.y;
+        }
+
 
 
         //

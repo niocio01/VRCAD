@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using Habrador_Computational_Geometry;
 
 public class Sketch
 {
@@ -24,8 +25,9 @@ public class Sketch
     public uint ConstraintIdCounter { get; private set; } = 0;
 
     // Geometry
-    public Vector2[] EdgeVertices { get; private set; }
-    public int[] Triangles { get; private set; }
+    public List<MyVector2> EdgeVertices { get; private set; }
+
+    public HashSet<Triangle2> Triangulation { get; private set; }
 
     // Constructor
     public Sketch(uint id, string name = "")
@@ -36,6 +38,7 @@ public class Sketch
         SketchID = id;
         Points = new List<SketchPoint>();
         Lines = new List<SketchLine>();
+        ConstructionLines = new List<SketchLine>();
         Constraints = new List<SketchConstraint>();
     }
 
@@ -56,12 +59,23 @@ public class Sketch
     // Add Elements
     public SketchPoint AddPoint(float x, float y)
     {
-        SketchPoint point = new SketchPoint(new Vector2(x, y), PointIdCounter);
-        Points.Add(point);
+        // check if point on this position allready exists,
+        // if so, return that point insted of creationg a new one
+        foreach (SketchPoint point in Points)
+        {
+            if (point.Position.x == x && point.Position.y == y)
+            {
+                return point;
+            }
+        }
+
+        SketchPoint newPoint = new SketchPoint(new Vector2(x, y), PointIdCounter);
+
+        Points.Add(newPoint);
         PointIdCounter++;
 
         OnPointAdded?.Invoke();
-        return point;
+        return newPoint;
     }
     public SketchLine AddLine(uint firstID, uint secondID, bool construction = false) 
     {
@@ -88,7 +102,6 @@ public class Sketch
 
         return line;
     }
-
     public SketchLine AddLine(SketchPoint first, SketchPoint second, bool construction = false)
     {
         if (first == second) return null;
@@ -214,21 +227,44 @@ public class Sketch
         }  
         return false;
     }
-    public void UpdateVertices()
+    public bool UpdateVertices()
     {
-        EdgeVertices = new Vector2[Lines.Count];
+        EdgeVertices = new List<MyVector2>();
 
-        for (int i = 0; i < Lines.Count; i++)
+        foreach (SketchLine line in Lines)
         {
-            EdgeVertices[i] = Lines[i].Points[0].Position;
+            EdgeVertices.Add(new MyVector2(line.Points[0].Position));
         }
+
+        WindingDir order = PolyUtils.FindWindingDir(EdgeVertices);
+
+        if (order == WindingDir.None)
+        {
+            Debug.Log($"Winding Order could not be determied.");
+            return false;
+        }
+
+        if (order == WindingDir.Clockwise)
+        {
+            EdgeVertices.Reverse();
+        }
+
+        return true;
     }
     public bool UpdateTriangles()
     {
-        if(!Triangulation.Triangulate(EdgeVertices, out int[] triangles, out string errorMessage))
-            return false;
-        
-        Triangles = triangles;
+        //Triangulate
+        System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+
+        timer.Start();
+
+
+        Triangulation = _EarClipping.Triangulate(EdgeVertices, null, optimizeTriangles: false);
+
+        timer.Stop();
+        Debug.Log($"Number of triangles from ear clipping: {Triangulation.Count}");
+        Debug.Log($"Generated an Ear Clipping triangulation in {timer.ElapsedMilliseconds / 1000f} seconds");
+
         return true;
     }
     public JsonSketch ToJsonSketch()

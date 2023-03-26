@@ -306,9 +306,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   JsonFile: {fileID: 4900000, guid: f51cffbd04ccfa643b9849d73c49b6a0, type: 3}
-  SketchEditor: {fileID: 8868266589702979925}
+  UseJsonFile: 0
+  SketchEditorObject: {fileID: 26130126051230268}
   MeshParent: {fileID: 826415530}
   MeshDrawer: {fileID: 826415533}
+  SketchEditor: {fileID: 8868266589702979925}
 --- !u!1 &11051024 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8758423527188247893, guid: 5b158b94c373d4b4f9e98cdb92789343,
@@ -2280,8 +2282,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 826415530}
-  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0.032084174, y: 0.049983084, z: 0.023851395}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2344,7 +2346,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PartEditor: {fileID: 7127984}
   MeshRenderer: {fileID: 826415532}
-  SketchPlane: {fileID: 7538010476104925180}
+  MeshParent: {fileID: 826415530}
 --- !u!1 &870453916
 GameObject:
   m_ObjectHideFlags: 0
@@ -5152,6 +5154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SketchPlane: {fileID: 7538010476104925180}
+  SketchToolsObject: {fileID: 465732005}
   Reticle_Prefab: {fileID: 1842889379884118034, guid: d4930bfaec666104d8ff47224b31587b,
     type: 3}
   RayInteractor: {fileID: 1192015024}

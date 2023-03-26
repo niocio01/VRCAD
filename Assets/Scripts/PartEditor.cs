@@ -13,11 +13,13 @@ public enum EditMode_t
 public class PartEditor : MonoBehaviour
 {
     [SerializeField] TextAsset JsonFile;
-    [SerializeField] private SketchEditor SketchEditor;
+    [SerializeField] bool UseJsonFile;
+    [SerializeField] private GameObject SketchEditorObject;
     [SerializeField] private GameObject MeshParent;
     [SerializeField] private MeshDrawer MeshDrawer;
 
     public Part Part { get; private set; }
+    public SketchEditor SketchEditor;
     private EditMode_t EditMode = EditMode_t.None;
 
     
@@ -25,11 +27,15 @@ public class PartEditor : MonoBehaviour
 
     private void Start()
     {
-        if (JsonFile == null)
+        SketchEditor = GetComponentInChildren<SketchEditor>();
+
+        if (!UseJsonFile || JsonFile == null)
         {
             Part = new Part("EditorTest", "Made VR Editor", "Nico Zuber");
             Part.AddSketch(new Sketch(0, "Default"));
             SketchEditor.StartEditSketch(Part.Sketches.First());
+
+            EditMode = EditMode_t.Sketch;
         }
         else
         {
@@ -54,6 +60,7 @@ public class PartEditor : MonoBehaviour
                         EditMode = EditMode_t.None;
 
                         MeshDrawer.UpdateMesh();
+                        SketchEditorObject.SetActive(false);
                     }
                 } break;
             case EditMode_t.Feature: break;
