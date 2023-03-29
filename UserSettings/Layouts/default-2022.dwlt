@@ -74,6 +74,7 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 100}
   m_MaxSize: {x: 8096, y: 16192}
   vertical: 1
+  controlID: 89
   controlID: 112
 --- !u!114 &4
 MonoBehaviour:
@@ -151,6 +152,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
+  controlID: 87
   controlID: 110
 --- !u!114 &7
 MonoBehaviour:
@@ -300,6 +302,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 0
+  controlID: 88
   controlID: 111
 --- !u!114 &13
 MonoBehaviour:
@@ -677,8 +680,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 86660000
-    m_LastClickedInstanceID: 26246
+    m_SelectedInstanceIDs: 
+    m_LastClickedInstanceID: 0
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c62300000000000072800000aa7b00002a660000
     m_RenameOverlay:
@@ -1143,8 +1146,8 @@ MonoBehaviour:
     m_Value: {x: 2.0121913, y: 0.42757413, z: -0.46631014}
   m_RenderMode: 0
   m_CameraMode:
-    drawMode: 0
-    name: Shaded
+    drawMode: 2
+    name: Shaded Wireframe
     section: Shading Mode
   m_ValidateTrueMetals: 0
   m_DoValidateTrueMetals: 0

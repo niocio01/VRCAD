@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class LineTool : MonoBehaviour
-{ 
+{
     [SerializeField] GameObject PreviewLinePrefab;
     [SerializeField] GameObject PreviewLineParent;
     [SerializeField] SketchEditor SketchEditor;
@@ -29,18 +29,18 @@ public class LineTool : MonoBehaviour
             return;
 
         if (!SketchEditor.GetPointerPosition(out Vector3 absPos, out Vector3 relPos))
-            return; 
-        
+            return;
+
         Vector3 lineStart = SketchEditor.SketchPlane.transform.TransformPoint(StartPoint.Position.x, StartPoint.Position.y, 0);
         Vector3 lineEnd = SketchEditor.SketchPlane.transform.TransformPoint(relPos.x, relPos.y, 0);
 
-        PreviewLine.GetComponent<Renderer>().enabled = true;      
+        PreviewLine.GetComponent<Renderer>().enabled = true;
 
         LineController.SetPoints(lineStart, lineEnd);
     }
 
     public void AddPoint()
-    {        
+    {
         if (!SketchEditor.GetPointerPosition(out Vector3 absPos, out Vector3 relPos))
             return;
 
@@ -56,7 +56,7 @@ public class LineTool : MonoBehaviour
             StartPoint = endPoint;
 
             SketchEditor.Sketch.AddLine(startPoint, endPoint);
-            
+
         }
     }
     public void EndLine()

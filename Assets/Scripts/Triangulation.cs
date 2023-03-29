@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Habrador_Computational_Geometry;
+using System.Linq;
 
 
 //public static class Triangulation
@@ -172,21 +173,23 @@ public static class PolyUtils
     {
         float totalArea = 0f;
 
-        for (int i = 0; i < vertices.Count; i++)
+        float minY = vertices.Min(v => v.y);
 
+
+        for (int i = 0; i < vertices.Count; i++)
         {
             MyVector2 a = vertices[i];
             MyVector2 b = vertices[(i + 1) % vertices.Count];
 
-            float dy = (a.x + b.y) / 2f;
+            float dy = (b.y + a.y) / 2f;
             float dx = b.x - a.x;
 
             float area = dy * dx;
             totalArea += area;
         }
 
-        if(totalArea > 0) return WindingDir.CounterClockwise;
-        if (totalArea < 0) return WindingDir.Clockwise;
+        if (totalArea < 0) return WindingDir.CounterClockwise;
+        if (totalArea > 0) return WindingDir.Clockwise;
         return WindingDir.None;
     }
 

@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.Linq;
 using Habrador_Computational_Geometry;
+using UnityEditor.VersionControl;
 
 public class Sketch
 {
@@ -174,6 +175,8 @@ public class Sketch
     public bool HullIsClosed()
     {
 
+        string message = "Hull: ";
+
         // create new list and add Elements in the order of the path to speed up processing
         // when accessing function the next time
         List<SketchLine> newList = new List<SketchLine>();
@@ -195,13 +198,15 @@ public class Sketch
 
         for (int i = 0; i < length; i++)
         {
+            message += current.Points[0].Position + " -> ";
+
             next = oldList.Find(line => line.Points[0] == current.Points[1]);
             if (next != null)
             {
                 // remove from list to speed up searching...
                 oldList.Remove(next);
-                newList.Add(next);
-                current = next; 
+                newList.Add(next);                
+                current = next;                 
                 continue;
             }
 
@@ -220,9 +225,13 @@ public class Sketch
             return false;
         }
 
+        message += current.Points[0].Position + " -> ";
+        message += newList.Last().Points[1].Position;
+
         if (newList.Last().Points[1] == first.Points[0])
         {
             Lines = newList;
+            Debug.Log(message);
             return true;
         }  
         return false;

@@ -49,7 +49,6 @@ public class SketchEditor : MonoBehaviour
         CurrentTool = SketchTools.Point;
         ToolsGroup.onSelectionChanged.AddListener(SetTool);
     }
-
     private void Update()
     {
         if (GetPointerPosition(out Vector3 absPos, out Vector3 relPos))
@@ -62,12 +61,10 @@ public class SketchEditor : MonoBehaviour
             reticle.GetComponent<Renderer>().enabled = false;
         }
     }
-
     private void OnDisable()
     {
         SketchToolsObject.SetActive(false);
     }
-
     private void OnEnable()
     {
         SketchToolsObject.SetActive(true);
