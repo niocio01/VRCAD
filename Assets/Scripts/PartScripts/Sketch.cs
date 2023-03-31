@@ -4,7 +4,6 @@ using UnityEngine;
 using System;
 using System.Linq;
 using Habrador_Computational_Geometry;
-using UnityEditor.VersionControl;
 
 public class Sketch
 {
@@ -21,9 +20,9 @@ public class Sketch
     public Transform Transform { get; private set; }
 
     // Counters
-    public uint PointIdCounter { get; private set; } = 0;
-    public uint LineIdCounter { get; private set; } = 0;
-    public uint ConstraintIdCounter { get; private set; } = 0;
+    public uint PointIdCounter { get; private set; }
+    public uint LineIdCounter { get; private set; }
+    public uint ConstraintIdCounter { get; private set; }
 
     // Geometry
     public List<MyVector2> EdgeVertices { get; private set; }
@@ -60,8 +59,8 @@ public class Sketch
     // Add Elements
     public SketchPoint AddPoint(float x, float y)
     {
-        // check if point on this position allready exists,
-        // if so, return that point insted of creationg a new one
+        // check if point on this position already exists,
+        // if so, return that point instead of creation a new one
         foreach (SketchPoint point in Points)
         {
             if (point.Position.x == x && point.Position.y == y)
@@ -86,7 +85,7 @@ public class Sketch
         if (first == null) return null;
 
         SketchPoint second = Points.Find(x => x.ID == secondID);
-        if (first == null) return null;
+        if (second == null) return null;
 
         SketchLine line = new SketchLine(first, second, LineIdCounter);
         if(construction)
@@ -107,7 +106,7 @@ public class Sketch
     {
         if (first == second) return null;
         if (first == null) return null;
-        if (first == null) return null;
+        if (second == null) return null;
 
         SketchLine line = new SketchLine(first, second, LineIdCounter);
         if (construction)
@@ -128,7 +127,6 @@ public class Sketch
         if (constraint == null) return;
         ConstraintIdCounter++;
         Constraints.Add(constraint);
-        return;
     }
 
     // Set Lists
@@ -165,7 +163,7 @@ public class Sketch
         }
     }
 
-    // Auxilary
+    // Auxiliary
 
     /// <summary>
     /// checks if the SketchLines form a closed loop.
@@ -174,7 +172,6 @@ public class Sketch
     /// <returns>true, if closed</returns>
     public bool HullIsClosed()
     {
-
         string message = "Hull: ";
 
         // create new list and add Elements in the order of the path to speed up processing
@@ -183,6 +180,7 @@ public class Sketch
 
         // make copy of current list, and only override it if all went smoothly...
         List<SketchLine> oldList = new List<SketchLine>(Lines);
+        if (oldList.Count < 3) return false;
 
         SketchLine first = oldList.First();
 
@@ -192,7 +190,7 @@ public class Sketch
         SketchLine current = first;
         newList.Add(current);
 
-        SketchLine next = null;
+        SketchLine next;
 
         int length = oldList.Count;
 
@@ -249,7 +247,7 @@ public class Sketch
 
         if (order == WindingDir.None)
         {
-            Debug.Log($"Winding Order could not be determied.");
+            Debug.Log($"Winding Order could not be determined.");
             return false;
         }
 
@@ -268,7 +266,7 @@ public class Sketch
         timer.Start();
 
 
-        Triangulation = _EarClipping.Triangulate(EdgeVertices, null, optimizeTriangles: false);
+        Triangulation = _EarClipping.Triangulate(EdgeVertices, optimizeTriangles: false);
 
         timer.Stop();
         Debug.Log($"Number of triangles from ear clipping: {Triangulation.Count}");
@@ -278,10 +276,12 @@ public class Sketch
     }
     public JsonSketch ToJsonSketch()
     {
-        JsonSketch jsonSketch = new JsonSketch();
-        jsonSketch.Name = Name;
-        jsonSketch.SketchID = SketchID;
-        jsonSketch.Points = Points;
+        JsonSketch jsonSketch = new JsonSketch
+        {
+            Name = Name,
+            SketchID = SketchID,
+            Points = Points
+        };
 
         List<JsonSketchLine> jsonSketchLines = new List<JsonSketchLine>();
         foreach (SketchLine line in Lines)
@@ -289,9 +289,9 @@ public class Sketch
             jsonSketchLines.Add(line.ToJsonLine(false));
         }
        
-        foreach (SketchLine Cline in ConstructionLines)
+        foreach (SketchLine cline in ConstructionLines)
         {
-            jsonSketchLines.Add(Cline.ToJsonLine(true));
+            jsonSketchLines.Add(cline.ToJsonLine(true));
         }
         jsonSketch.Lines = jsonSketchLines;
 
@@ -323,21 +323,21 @@ public class JsonSketch
     [JsonProperty("Constraints")]
     public List<JsonConstraint> Constraints;
 
-    // Auxilary
+    // Auxiliary
     public Sketch ToSketch()
     {
         Sketch sketch = new Sketch(SketchID);
         sketch.SetPoints(Points);
 
         List<SketchLine> sketchLines = new List<SketchLine>();
-        List<SketchLine> C_sketchLines = new List<SketchLine>();
+        List<SketchLine> cSketchLines = new List<SketchLine>();
         foreach (JsonSketchLine jsonLine in Lines)
         {
             SketchLine line = jsonLine.ToSketchLine(Points, out bool construction);
 
             if (construction)
             {
-                C_sketchLines.Add(line);
+                cSketchLines.Add(line);
             }
             else
             {                
@@ -347,7 +347,7 @@ public class JsonSketch
         }
 
         sketch.SetLines(sketchLines);
-        sketch.SetLines(C_sketchLines, true);
+        sketch.SetLines(cSketchLines, true);
 
         List<SketchConstraint> sketchConstraints = new List<SketchConstraint>();
         foreach(JsonConstraint jsonConstraint in Constraints)

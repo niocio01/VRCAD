@@ -5,15 +5,15 @@ using Newtonsoft.Json.Linq;
 public abstract class Feature
 {
     // Properties
-    public virtual uint FeatureID { protected set; get; }
+    protected virtual uint FeatureID { set; get; }
 
     // Base Constructor
-    public Feature(uint id)
+    protected Feature(uint id)
     {
         FeatureID = id;
     }
 
-    // Auxilary
+    // Auxiliary
     public abstract JsonFeature ToJsonFeature();
 }
 
@@ -27,7 +27,7 @@ public abstract class JsonFeature
     public virtual string Type { protected set; get; }
 
     // Base Constructor
-    public JsonFeature(string type, uint  id)
+    protected JsonFeature(string type, uint  id)
     {
         Type = type;
         FeatureID = id;
@@ -38,8 +38,8 @@ public abstract class JsonFeature
 public class Extrude : Feature
 {
     // Properties
-    public Sketch BaseSketch { get; private set; }
-    public float ExtrusionHeight { get; private set; }
+    private Sketch BaseSketch { get; set; }
+    private float ExtrusionHeight { get; set; }
 
     // Constructor
     public Extrude(Sketch baseSketch, float height, uint featureID) : base(featureID) {
@@ -48,32 +48,32 @@ public class Extrude : Feature
         ExtrusionHeight = height;
     }
 
-    // Auxilary
+    // Auxiliary
     public override JsonFeature ToJsonFeature()
     {
-        return new JsonExtrude(ExtrusionHeight, BaseSketch.SketchID, FeatureID); ;
+        return new JsonExtrude(ExtrusionHeight, BaseSketch.SketchID, FeatureID);
     }
 }
 public class JsonExtrude : JsonFeature
 {
     // Properties
     [JsonProperty("BaseSketch", Order = 2)]
-    uint BaseSketchID;
+    private uint _baseSketchID;
 
     [JsonProperty("ExtrusionHeight", Order = 3)]
-    float ExtrusionHeight;
+    private float _extrusionHeight;
 
     // Constructor
-    public JsonExtrude(float extrusionHeight, uint basesketchID, uint featureID) : base("Extrude", featureID)
+    public JsonExtrude(float extrusionHeight, uint baseSketchID, uint featureID) : base("Extrude", featureID)
     {
-        BaseSketchID = basesketchID;
-        ExtrusionHeight = extrusionHeight;
+        _baseSketchID = baseSketchID;
+        _extrusionHeight = extrusionHeight;
     }
 
-    // Auxilary
+    // Auxiliary
     public override Feature ToFeature(List<Sketch> sketches)
     {
-        return new Extrude(sketches.Find(s => s.SketchID == BaseSketchID), ExtrusionHeight, FeatureID); ;
+        return new Extrude(sketches.Find(s => s.SketchID == _baseSketchID), _extrusionHeight, FeatureID);
     }
     public static JsonExtrude Deserialize(JObject jsonObject)
     {
@@ -84,12 +84,11 @@ public class JsonExtrude : JsonFeature
     }
 }
 
-
 public class Revolve : Feature
 {
     // Properties
-    public Sketch BaseSketch { get; private set; }
-    public SketchElementReference Axis { get; private set; }
+    private Sketch BaseSketch { get; set; }
+    private SketchElementReference Axis { get; set; }
 
     // Constructor
     public Revolve(Sketch baseSketch, SketchLine axis, uint featureId) : base(featureId)
@@ -98,7 +97,7 @@ public class Revolve : Feature
         Axis = new SketchElementReference("Line", baseSketch, axis);
     }
 
-    // Auxilary
+    // Auxiliary
     public override JsonFeature ToJsonFeature()
     {
         return new JsonRevolve(BaseSketch.SketchID, Axis.ToJsonRef(), FeatureID);
@@ -108,22 +107,22 @@ public class JsonRevolve : JsonFeature
 {
     // Properties
     [JsonProperty("BaseSketch", Order = 2)]
-    uint BaseSketchID;
+    private uint _baseSketchID;
 
     [JsonProperty("Axis", Order = 3)]
-    JsonSketchElementReference Reference;
+    JsonSketchElementReference _reference;
 
     // Constructor
-    public JsonRevolve(uint basesketchID, JsonSketchElementReference reference, uint featureID) : base("Revolve", featureID)
+    public JsonRevolve(uint baseSketchID, JsonSketchElementReference reference, uint featureID) : base("Revolve", featureID)
     {
-        BaseSketchID = basesketchID;
-        Reference = reference;
+        _baseSketchID = baseSketchID;
+        _reference = reference;
     }
 
-    // Auxilary
+    // Auxiliary
     public override Feature ToFeature(List<Sketch> sketches)
     {
-        SketchElementReference reference = Reference.ToSketchRef(sketches);        
+        SketchElementReference reference = _reference.ToSketchRef(sketches);        
         return new Revolve(reference.Sketch, (SketchLine)reference.Reference, FeatureID);
     }
 

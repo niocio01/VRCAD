@@ -1,67 +1,63 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(SketchEditor))]
 public class LineTool : MonoBehaviour
 {
-    [SerializeField] GameObject PreviewLinePrefab;
-    [SerializeField] GameObject PreviewLineParent;
-    [SerializeField] SketchEditor SketchEditor;
-
-    SketchPoint StartPoint;
-    GameObject PreviewLine;
-    LineController LineController;
+    [SerializeField] private GameObject previewLinePrefab;
+    [SerializeField] private GameObject previewLineParent;
+    
+    private SketchEditor _sketchEditor;
+    private SketchPoint _startPoint;
+    private GameObject _previewLine;
+    private LineController _lineController;
 
     private void Awake()
     {
-        PreviewLine = Instantiate(PreviewLinePrefab, Vector3.zero, Quaternion.identity, PreviewLineParent.transform);
-        LineController = PreviewLine.GetComponent<LineController>();
+        _sketchEditor = GetComponent<SketchEditor>();
+        _previewLine = Instantiate(previewLinePrefab, Vector3.zero, Quaternion.identity, previewLineParent.transform);
+        _lineController = _previewLine.GetComponent<LineController>();
     }
-
-
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (SketchEditor.CurrentTool != SketchTools.Line)
+        if (_sketchEditor.CurrentTool != SketchTools.Line)
             return;
 
-        if (StartPoint == null)
+        if (_startPoint == null)
             return;
 
-        if (!SketchEditor.GetPointerPosition(out Vector3 absPos, out Vector3 relPos))
+        if (!_sketchEditor.GetPointerPosition(out _, out Vector3 relPos))
             return;
 
-        Vector3 lineStart = SketchEditor.SketchPlane.transform.TransformPoint(StartPoint.Position.x, StartPoint.Position.y, 0);
-        Vector3 lineEnd = SketchEditor.SketchPlane.transform.TransformPoint(relPos.x, relPos.y, 0);
+        Vector3 lineStart = _sketchEditor.sketchPlane.transform.TransformPoint(_startPoint.Position.x, _startPoint.Position.y, 0);
+        Vector3 lineEnd = _sketchEditor.sketchPlane.transform.TransformPoint(relPos.x, relPos.y, 0);
 
-        PreviewLine.GetComponent<Renderer>().enabled = true;
+        _previewLine.GetComponent<Renderer>().enabled = true;
 
-        LineController.SetPoints(lineStart, lineEnd);
+        _lineController.SetPoints(lineStart, lineEnd);
     }
-
     public void AddPoint()
     {
-        if (!SketchEditor.GetPointerPosition(out Vector3 absPos, out Vector3 relPos))
+        if (!_sketchEditor.GetPointerPosition(out _, out Vector3 relPos))
             return;
 
-        if (StartPoint == null)
+        if (_startPoint == null)
         {
-            StartPoint = SketchEditor.Sketch.AddPoint(relPos.x, relPos.y);
+            _startPoint = _sketchEditor.Sketch.AddPoint(relPos.x, relPos.y);
         }
         else
         {
-            SketchPoint endPoint = SketchEditor.Sketch.AddPoint(relPos.x, relPos.y);
-            SketchPoint startPoint = StartPoint;
+            SketchPoint endPoint = _sketchEditor.Sketch.AddPoint(relPos.x, relPos.y);
+            SketchPoint startPoint = _startPoint;
 
-            StartPoint = endPoint;
+            _startPoint = endPoint;
 
-            SketchEditor.Sketch.AddLine(startPoint, endPoint);
+            _sketchEditor.Sketch.AddLine(startPoint, endPoint);
 
         }
     }
     public void EndLine()
     {
-        StartPoint = null;
-        PreviewLine.GetComponent<Renderer>().enabled = false;
+        _startPoint = null;
+        _previewLine.GetComponent<Renderer>().enabled = false;
     }
 }

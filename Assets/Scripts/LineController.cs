@@ -12,14 +12,12 @@ public class LineController : MonoBehaviour
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.positionCount = 0;
     }
-
     public void SetPoints(Vector3 first, Vector3 second)
     {
         points[0] = first;
         points[1] = second;
         lineRenderer.positionCount = points.Length;
     }
-
     private void LateUpdate()
     {
         lineRenderer.SetPositions(points);

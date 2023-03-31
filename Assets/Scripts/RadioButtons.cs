@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -6,62 +5,54 @@ using UnityEngine.UI;
 
 public class RadioButtonController : MonoBehaviour
 {
-    [System.Serializable]
-    public class SelectionChanged : UnityEvent<string>{ }
+    [System.Serializable] public class SelectionChanged : UnityEvent<string>{ }
+
+    [SerializeField] public SelectionChanged onSelectionChanged;
+
+    [SerializeField] Color deselectedColor = Color.white;
+    [SerializeField] Color selectedColor = Color.white;
+    [SerializeField] RadioButton defaultButton;
 
     [SerializeField]
-    public SelectionChanged onSelectionChanged;
+    private RadioButton[] radioButtons;
 
-    [SerializeField] Color DeselectedColor = Color.white;
-    [SerializeField] Color HoverColor = Color.white;
-    [SerializeField] Color SelectedColor = Color.white;
-    [SerializeField] RadioButton DefaultButton = null;
-
-    [SerializeField]
-    private RadioButton[] RadioButtons;
-
-    private Button[] Buttons;
-    private RadioButton CurrentlySelected = null;
+    private Button[] _buttons;
+    private RadioButton _currentlySelected;
 
     private void Awake()
     {
         List<Button> buttons = new List<Button>();
 
-        foreach (RadioButton RadioButton in RadioButtons)
+        foreach (RadioButton radioButton in radioButtons)
         {
-            buttons.Add(RadioButton.GetComponent<Button>());
+            buttons.Add(radioButton.GetComponent<Button>());
         }
-        Buttons = buttons.ToArray();
+        _buttons = buttons.ToArray();
 
-        CurrentlySelected = DefaultButton;
-        CurrentlySelected.BackgroundImage.color = SelectedColor;
+        _currentlySelected = defaultButton;
+        _currentlySelected.backgroundImage.color = selectedColor;
     }
-
     private void OnEnable()
     {
-        foreach(Button button in Buttons)
+        foreach(Button button in _buttons)
         {
             button.onClick.AddListener(delegate { HandleButtonPressed(button); });
         }
     }
-
     private void OnDisable()
     {
-        foreach (Button button in Buttons)
+        foreach (Button button in _buttons)
         {
             button.onClick.RemoveListener(delegate { HandleButtonPressed(button); });
         }
     }
-
     void HandleButtonPressed(Button button)
     {
-        CurrentlySelected.BackgroundImage.color = DeselectedColor;
+        _currentlySelected.backgroundImage.color = deselectedColor;
 
-        CurrentlySelected = button.GetComponent<RadioButton>();
-        CurrentlySelected.BackgroundImage.color = SelectedColor;
-
-        string Name = button.name;
-
+        _currentlySelected = button.GetComponent<RadioButton>();
+        _currentlySelected.backgroundImage.color = selectedColor;
+        
         onSelectionChanged?.Invoke(button.name);        
     }
 }

@@ -1,73 +1,63 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class LineDrawer : MonoBehaviour
 {
-    [SerializeField] private GameObject LinePrefab;
-    [SerializeField] private GameObject ConstructionLinePrefab;
-    [SerializeField] private GameObject LineParent;
-    [SerializeField] private GameObject SketchPlane;
-    [SerializeField] private SketchEditor SketchEditor;
+    [SerializeField] private GameObject linePrefab;
+    [SerializeField] private GameObject constructionLinePrefab;
+    [SerializeField] private GameObject lineParent;
+    [SerializeField] private GameObject sketchPlane;
+    public List<GameObject> lineObjects;
 
+    private Sketch _sketch;
+    private List<uint> _currentLineIds;
 
-    public List<GameObject> LineObjects;
-    private Sketch Sketch = null;
-    private List<uint> CurrentLineIds;
-
-    // Start is called before the first frame update
     private void Awake()
     {
-        LineObjects = new List<GameObject>();
-        CurrentLineIds = new List<uint>();
+        lineObjects = new List<GameObject>();
+        _currentLineIds = new List<uint>();
     }
-
     public void SetSketch(Sketch sketch)
     {
-        Sketch = sketch;
+        _sketch = sketch;
         Sketch.OnLineAdded += Editor_OnLineAdded;
         DestroyAll();
         DrawAll();
     }
-
     private void DestroyAll()
     {
-        foreach (GameObject point in LineObjects)
+        foreach (GameObject point in lineObjects)
         {
             Destroy(point);
         }
-        LineObjects.Clear();
-        CurrentLineIds.Clear();
+        lineObjects.Clear();
+        _currentLineIds.Clear();
     }
-
     private void Editor_OnLineAdded()
     {
         DrawAll();
     }
-
     private void DrawAll()
     {
-        DrawLines(Sketch.Lines, LinePrefab);
-        DrawLines(Sketch.ConstructionLines, ConstructionLinePrefab);
+        DrawLines(_sketch.Lines, linePrefab);
+        DrawLines(_sketch.ConstructionLines, constructionLinePrefab);
     }
-
-    // Update is called once per frame
-    void DrawLines(List<SketchLine> lines, GameObject prefab)
+    private void DrawLines(List<SketchLine> lines, GameObject prefab)
     {
         foreach (SketchLine line in lines)
         {
-            if (!CurrentLineIds.Contains(line.ID))
+            if (!_currentLineIds.Contains(line.ID))
             {
-                Vector3 lineStart = SketchPlane.transform.TransformPoint(line.Points[0].Position.x, line.Points[0].Position.y, 0);
-                Vector3 lineEnd = SketchPlane.transform.TransformPoint(line.Points[1].Position.x, line.Points[1].Position.y, 0);
+                Vector3 lineStart = sketchPlane.transform.TransformPoint(line.Points[0].Position.x, line.Points[0].Position.y, 0);
+                Vector3 lineEnd = sketchPlane.transform.TransformPoint(line.Points[1].Position.x, line.Points[1].Position.y, 0);
 
-                GameObject createdLineObject = Instantiate(prefab, Vector3.zero, Quaternion.identity, LineParent.transform);
+                GameObject createdLineObject = Instantiate(prefab, Vector3.zero, Quaternion.identity, lineParent.transform);
                 LineController createdLine = createdLineObject.GetComponent<LineController>();
                 createdLine.SetPoints(lineStart, lineEnd);
 
-                CurrentLineIds.Add(line.ID);
+                _currentLineIds.Add(line.ID);
 
-                LineObjects.Add(createdLineObject);
+                lineObjects.Add(createdLineObject);
             }
         }
     }

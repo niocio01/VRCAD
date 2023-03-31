@@ -1,8 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
 
 public abstract class SketchElement
@@ -10,7 +8,7 @@ public abstract class SketchElement
     [JsonProperty("Id")]
     public uint ID { protected set; get; }
 
-    public SketchElement(uint id)
+    protected SketchElement(uint id)
     {
         ID = id;
     }
@@ -32,7 +30,7 @@ public class SketchLine : SketchElement
 
     public SketchLine(SketchPoint first, SketchPoint second, uint id) : base(id)
     {
-        Points = new SketchPoint[2] { first, second };
+        Points = new SketchPoint[] { first, second };
         ID = id;
     }
 
@@ -51,13 +49,13 @@ public class JsonSketchLine
     public uint[] Points;
 
     [JsonProperty("Construction")]
-    public bool Construction = false;
+    public bool Construction;
 
-    public JsonSketchLine(uint firstId, uint secondId, uint lineId, bool constuction = false)
+    public JsonSketchLine(uint firstId, uint secondId, uint lineId, bool construction = false)
     {
         LineID = lineId;
         Points = new uint[] { firstId, secondId };
-        Construction = constuction;
+        Construction = construction;
     }
 
     public SketchLine ToSketchLine(List<SketchPoint> points, out bool construction)
