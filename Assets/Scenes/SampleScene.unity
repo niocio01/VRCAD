@@ -1649,16 +1649,10 @@ MonoBehaviour:
   onSelectionChanged:
     m_PersistentCalls:
       m_Calls: []
-  DeselectedColor: {r: 0.85882354, g: 0.85882354, b: 0.85882354, a: 1}
-  HoverColor: {r: 1, g: 1, b: 1, a: 1}
-  SelectedColor: {r: 0, g: 0.67531395, b: 1, a: 1}
-  DefaultButton: {fileID: 75714144}
-  RadioButtons:
-  - {fileID: 1272919354}
-  - {fileID: 103456214}
-  - {fileID: 75714144}
-  - {fileID: 74322123}
-  - {fileID: 1306904647}
+  deselectedColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedColor: {r: 1, g: 1, b: 1, a: 1}
+  defaultButton: {fileID: 0}
+  radioButtons: []
 --- !u!1 &501064641
 GameObject:
   m_ObjectHideFlags: 0
@@ -2494,7 +2488,7 @@ GameObject:
   m_Component:
   - component: {fileID: 808937184}
   m_Layer: 0
-  m_Name: MainEditor
+  m_Name: PartEditor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2603,9 +2597,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2e5f011f3701054787f660734b28469, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PartEditor: {fileID: 7127986}
-  MeshRenderer: {fileID: 826415532}
-  MeshParent: {fileID: 826415530}
+  partEditor: {fileID: 0}
+  meshRenderer: {fileID: 0}
 --- !u!1 &870453916
 GameObject:
   m_ObjectHideFlags: 0

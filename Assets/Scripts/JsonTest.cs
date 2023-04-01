@@ -1,16 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Editors.FeatureEditor;
+using Editors.PartEdit;
+using Editors.SketchEdit;
 
 public class JsonTest : MonoBehaviour
 {
-    private Part testPart;
-    void InitTestSketchObject ()
-    {
-        testPart = new Part("TestPart", "ForDoingJsonTests", "Nico Zuber");
+    private Part _testPart;
 
-        Sketch sketch = new Sketch(testPart.SketchIdCounter);
-        testPart.AddSketch(sketch);
+    public void InitTestSketchObject ()
+    {
+        _testPart = new Part("TestPart", "ForDoingJsonTests", "Nico Zuber");
+
+        Sketch sketch = new Sketch(_testPart.SketchIdCounter);
+        _testPart.AddSketch(sketch);
         sketch.AddPoint(0, 0);
         sketch.AddPoint(1, 0);
         sketch.AddPoint(1, 1);
@@ -25,11 +27,11 @@ public class JsonTest : MonoBehaviour
         sketch.AddConstraint(new Horizontal(sketch.GetPoint(0), sketch.GetPoint(1), sketch.ConstraintIdCounter));
         sketch.AddConstraint(new Vertical(sketch.GetPoint(0), sketch.GetPoint(3), sketch.ConstraintIdCounter));
 
-        testPart.AddFeature(new Extrude(sketch, 0.55f, testPart.FeatureIdCounter));
-        testPart.AddFeature(new Revolve(sketch, sketch.GetLine(2), testPart.FeatureIdCounter));
+        _testPart.AddFeature(new Extrude(sketch, 0.55f, _testPart.FeatureIdCounter));
+        _testPart.AddFeature(new Revolve(sketch, sketch.GetLine(2), _testPart.FeatureIdCounter));
 
-        Sketch sketch2 = new Sketch(testPart.SketchIdCounter);
-        testPart.AddSketch(sketch2);
+        Sketch sketch2 = new Sketch(_testPart.SketchIdCounter);
+        _testPart.AddSketch(sketch2);
         sketch2.AddPoint(-1, -1);
         sketch2.AddPoint(-1, -2);
         sketch2.AddLine(0, 1, true);
@@ -38,7 +40,7 @@ public class JsonTest : MonoBehaviour
     {
         InitTestSketchObject();
 
-        JsonHandler.JsonSave(testPart);
+        JsonHandler.JsonSave(_testPart);
     }
 
     [SerializeField] TextAsset jsonFile;

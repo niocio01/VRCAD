@@ -5,6 +5,8 @@ using System.Text;
 using System.IO;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 using Newtonsoft.Json.Linq;
+using Editors.FeatureEditor;
+using Editors.PartEdit;
 
 public class JsonHandler : MonoBehaviour
 {
@@ -32,12 +34,10 @@ public class JsonHandler : MonoBehaviour
         serializer.Converters.Add(new JsonFeature2JsonConverter());
 
         TextReader textReader = new StringReader(jsonAsset.ToString());
-        using (JsonTextReader JsonReader = new JsonTextReader(textReader))
-        {
-            JsonPart Jsonpart = serializer.Deserialize<JsonPart>(JsonReader);
+        using JsonTextReader jsonReader = new JsonTextReader(textReader);
+        JsonPart jsonPart = serializer.Deserialize<JsonPart>(jsonReader);
 
-            return Jsonpart.ToPart();
-        }
+        return jsonPart.ToPart();
     }
 }
 
