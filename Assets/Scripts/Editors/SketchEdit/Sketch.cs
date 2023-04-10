@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Geometry;
-using Habrador_Computational_Geometry;
 using Newtonsoft.Json;
-using Unity.XR.CoreUtils;
 using UnityEngine;
 
 namespace Editors.SketchEdit
@@ -189,7 +187,7 @@ namespace Editors.SketchEdit
             ClosedShape outline = new ClosedShape(outlineVerts);
             if (PolyUtils.Triangulate(outline, out List<int> triangles))
             {
-                Face = new Face(outlineVerts, new Vector3(0, 0, 1), triangles);
+                Face = new Face(new Vector3(0, 0, 0), new Vector3(0, 0, 1), outlineVerts, triangles.ToArray());
             }
 
             timer.Stop();

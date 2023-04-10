@@ -1,9 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Habrador_Computational_Geometry;
 using Editors.SketchEdit;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Geometry
@@ -200,6 +197,47 @@ namespace Geometry
             return a.x * b.y - b.x * a.y;
         }
 
+        public static Vector2 ProjectToPlane(Vector3 vector, Vector3 planeOrigin, Vector3 planeNormal)
+        {
+            // https://www.baeldung.com/cs/3d-point-2d-plane
+
+            
+            // TODO: make inline
+            float a = planeNormal.x;
+            float b = planeNormal.y;
+            float c = planeNormal.z;
+
+            float p = planeOrigin.x;
+            float q = planeOrigin.y;
+            float r = planeOrigin.z;
+
+            float z1 = vector.x;
+            float z2 = vector.y;
+            float z3 = vector.z;
+
+            // d = ap + bq + cr
+            float d = a * p + b * q + c * r;
+
+            float k = (d - a * z1 - b * z2 - c * z3) / (a * a + b * b + c * c);
+
+            // get position of projection in original (3D) coordinate system
+            float z1_ = z1 + k * a;
+            float z2_ = z2 + k * b;
+            float z3_ = z2 + k * c;
+            
+            // assuming unit vectors of new (2D) coordinate system are the x and y of the provided plane normal.
+            Vector2 projection = new Vector2(z1_ , z2_);
+            return projection;
+
+            
+            // for custom unit vectors:
+            Vector3 e1 = new Vector3(1, 0, 0);
+            Vector3 e2 = new Vector3(0, 1, 0);
+
+            Vector2 customProj =
+                new Vector2(e1.x * z1_ + e1.y * z2_ + e1.z * z3_, e2.x * z1_ + e2.y * z2_ + e2.z * z3_);
+        }
+
         public static bool IsVertexInsideCorner(LinkedVertex vertex, LinkedVertex corner)
         {
             // TODO: Inline each of these lines for performance?
@@ -221,6 +259,14 @@ namespace Geometry
             }
 
             return false;
+        }
+    }
+
+    public static class VectExt
+    {
+        public static Vector3 Reverse(this Vector3 vector)
+        {
+            return new Vector3(-vector.x, -vector.y, -vector.z);
         }
     }
 }

@@ -1,7 +1,8 @@
+using System.Collections.Generic;
 using System.Linq;
 using Editors.PartEdit;
 using Editors.SketchEdit;
-using Habrador_Computational_Geometry;
+using Geometry;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -24,10 +25,15 @@ namespace Rendering
             // TODO: use not just the first, but all of the sketches and features to build the mesh
             Sketch sketch = partEditor.Part.Sketches.FirstOrDefault();
 
+            MyMesh myMesh = new MyMesh();
+            
+            myMesh.AddFace(sketch.Face);
+            MeshOperations.Extrude(sketch.Face, new Vector3(0, 0, 0.2f), ref myMesh);
 
-            _mesh.vertices = sketch.Face.Vertices3.ToArray();
-            _mesh.triangles = sketch.Face.TriangleIndices.ToArray();
-            _mesh.normals = sketch.Face.Normals.ToArray();
+
+            _mesh.vertices = myMesh.Vertices;
+            _mesh.triangles = myMesh.Triangles;
+            _mesh.normals = myMesh.Normals;
 
             // Mesh.RecalculateNormals();
             _mesh.RecalculateBounds();

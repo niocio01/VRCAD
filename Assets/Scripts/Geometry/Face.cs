@@ -5,19 +5,21 @@ namespace Geometry
 {
     public class Face
     {
-        private List<Vector2> _vertices2;
-
         /// Ordered List of vertex positions
-        public List<Vector2> Vertices2
-        {
+        public List<Vector2> Vertices2 { private set; get; }
+
+        public List<Vector3> Vertices3 {
             private set
             {
-                _vertices2 = value;
-                Vertices3 = _vertices2.ConvertAll(v => new Vector3(v.x, v.y, 0));
+                Vertices2 = value.ConvertAll(v => PolyUtils.ProjectToPlane(v, Origin, FaceNormal));
             }
-            get => _vertices2;
+            get
+            {
+                return Vertices2.ConvertAll(v => new Vector3(v.x, v.y, 0));
+            } 
         }
-        public List<Vector3> Vertices3 { private set; get; }
+        
+        public Vector3 Origin { get; private set; }
 
         /// Used to generate the vertex normals
         public Vector3 FaceNormal { private set; get; }
@@ -28,7 +30,7 @@ namespace Geometry
             get
             {
                 List<Vector3> normals = new List<Vector3>();
-                for (int i = 0; i < _vertices2.Count; i++)
+                for (int i = 0; i < Vertices2.Count; i++)
                 {
                     normals.Add(FaceNormal);
                 }
@@ -40,9 +42,10 @@ namespace Geometry
         private List<FaceTriangle> _triangles;
         public List<FaceTriangle> Triangles
         {
+            get => _triangles;
             private set
             {
-                if (value.Count != Vertices2.Count - 1)
+                if (value.Count != Vertices2.Count - 2)
                 {
                     Debug.LogError("Number of Triangles does not match with number of Vertices.");
                     return;
@@ -50,71 +53,91 @@ namespace Geometry
 
                 _triangles = value;
             }
-            get => _triangles;
         }
 
-        public List<int> TriangleIndices
+        public int[] TriangleIndices
         {
             set
             {
-               if (value.Count % 3 != 0)
+               if (value.Length % 3 != 0)
                {
                    Debug.LogError("indices must come in pairs of 3");
                    return;
                }
 
-               if (value.Count == 3 && Vertices2.Count != 3)
+               if (value.Length == 3 && Vertices3.Count != 3)
                {
                    Debug.LogError("indices count does not match with vertex count.");
                    return;
                }
                
-               if (Vertices2.Count - 2 != value.Count/3 )
+               if (Vertices3.Count - 2 != value.Length/3 )
                {
                    Debug.LogError("indices count does not match with vertex count.");
                    return;
                }
 
                List<FaceTriangle> tris = new List<FaceTriangle>();
-               for (int i = 0; i < value.Count; i += 3)
+               for (int i = 0; i < value.Length; i += 3)
                {
                    tris.Add(new FaceTriangle(value[i], value[i+1], value[i+2]));
                }
 
-               _triangles = tris;
+               Triangles = tris;
             }
             get
             {
-                List<int> indices = new List<int>();
-                foreach (FaceTriangle triangle in _triangles)
+                int[] indices = new int[Triangles.Count * 3];
+                int i = 0;
+                foreach (FaceTriangle triangle in Triangles)
                 {
                     int[] triVerts = triangle.VertexIndices;
-                    indices.Add(triVerts[0]);
-                    indices.Add(triVerts[1]);
-                    indices.Add(triVerts[2]);
+                    indices[i++] = triVerts[0];
+                    indices[i++] = triVerts[1];
+                    indices[i++] = triVerts[2];
                 }
                 return indices;
             }
         }
 
-        public Face(List<Vector2> vertices2, Vector3 faceNormal, List<int> triangles)
+        public Face(Vector3 origin, Vector3 faceNormal, List<Vector2> vertices2, int[] triangles)
         {
-            Vertices2 = vertices2;
+            Origin = origin;
+            if (faceNormal.magnitude == 0f)
+            {
+                Debug.LogError("Face Normal cannot have length of zero.");
+                return;
+            }
             FaceNormal = faceNormal;
+            Vertices2 = vertices2;
             TriangleIndices = triangles;
         }
 
-        public Face(List<Vector3> vertices3, Vector3 faceNormal, List<int> triangles)
+        public Face(Vector3 origin, Vector3 faceNormal, List<Vector3> vertices3, int[] triangles)
         {
-            Vertices3 = vertices3;
+            Origin = origin;
+            if (faceNormal.magnitude == 0f)
+            {
+                Debug.LogError("Face Normal cannot have length of zero.");
+                return;
+            }
             FaceNormal = faceNormal;
+            Vertices3 = vertices3;
             TriangleIndices = triangles;
+        }
+
+        public void FlipNormals()
+        {
+            foreach (FaceTriangle triangle in Triangles)
+            {
+                triangle.FlipNormal();
+            }
         }
     }
 
     public class FaceTriangle
     {
-        public int[] VertexIndices { get; } = new int[3];
+        public int[] VertexIndices { get; private set; } = new int[3];
 
         FaceTriangle(int[] vertexIndices)
         {
@@ -132,6 +155,11 @@ namespace Geometry
             VertexIndices[0] = first;
             VertexIndices[1] = second;
             VertexIndices[2] = third;
+        }
+
+        public void FlipNormal()
+        {
+            (VertexIndices[0], VertexIndices[2]) = (VertexIndices[2], VertexIndices[0]);
         }
     }
 }
