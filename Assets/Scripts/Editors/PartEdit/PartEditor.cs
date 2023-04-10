@@ -27,7 +27,6 @@ namespace Editors.PartEdit
         {
             _sketchEditor = sketchEditorGameObject.GetComponent<SketchEditor>();
         }
-
         private void Start()
         {
             if (!useJsonFile || jsonFile == null)

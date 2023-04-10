@@ -24,17 +24,10 @@ namespace Rendering
             // TODO: use not just the first, but all of the sketches and features to build the mesh
             Sketch sketch = partEditor.Part.Sketches.FirstOrDefault();
 
-            Mesh temp = _TransformBetweenDataStructures.Triangles2ToMesh(sketch.Triangulation, true);
-            // TestAlgorithmsHelpMethods.DisplayMeshWithRandomColors(Mesh, 0);
 
-            Vector3 polygonNormal = new Vector3(0, 0, 1);
-            Vector3[] normals = new Vector3[temp.vertices.Length];
-            for (int i = 0; i < temp.vertices.Length; i++)
-            { normals[i] = polygonNormal; }
-
-            _mesh.vertices = temp.vertices;
-            _mesh.triangles = temp.triangles;
-            _mesh.normals = normals;
+            _mesh.vertices = sketch.Face.Vertices3.ToArray();
+            _mesh.triangles = sketch.Face.TriangleIndices.ToArray();
+            _mesh.normals = sketch.Face.Normals.ToArray();
 
             // Mesh.RecalculateNormals();
             _mesh.RecalculateBounds();

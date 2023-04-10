@@ -1,35 +1,35 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Geometry;
 using Habrador_Computational_Geometry;
 using Newtonsoft.Json;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 
 namespace Editors.SketchEdit
 {
     public class Sketch
     {
+        // Events
         public static event Action OnPointAdded;
         public static event Action OnLineAdded;
 
-        // Properties
+        // general props
         public string Name { get; private set; }
         public uint SketchID { get; private set; }
         public List<SketchPoint> Points { get; private set; }
         public List<SketchLine> Lines { get; private set; }
         public List<SketchLine> ConstructionLines { get; private set; }
         public List<SketchConstraint> Constraints { get; private set; }
-        public Transform Transform { get; private set; }
+
+        // Geometry
+        public Face Face { get; private set; }
 
         // Counters
         public uint PointIdCounter { get; private set; }
         public uint LineIdCounter { get; private set; }
         public uint ConstraintIdCounter { get; private set; }
-
-        // Geometry
-        public List<MyVector2> EdgeVertices { get; private set; }
-
-        public HashSet<Triangle2> Triangulation { get; private set; }
 
         // Constructor
         public Sketch(uint id, string name = "")
@@ -166,112 +166,33 @@ namespace Editors.SketchEdit
         }
 
         // Auxiliary
-
-        /// <summary>
-        /// checks if the SketchLines form a closed loop.
-        /// Also reorders the list and flips reversed lines
-        /// </summary>
-        /// <returns>true, if closed</returns>
-        public bool HullIsClosed()
+        public bool GenerateFace()
         {
-            string message = "Hull: ";
+            PolyUtils.GenerateOutline(Lines, out List<SketchLine> sortedLines, out List<Vector2> outlineVerts);
+            Lines = sortedLines;
+            
+            // Make sure winding order is correct
+            WindingDir order = PolyUtils.FindWindingDir(outlineVerts);
 
-            // create new list and add Elements in the order of the path to speed up processing
-            // when accessing function the next time
-            List<SketchLine> newList = new List<SketchLine>();
+            if (order == WindingDir.None) return false;
 
-            // make copy of current list, and only override it if all went smoothly...
-            List<SketchLine> oldList = new List<SketchLine>(Lines);
-            if (oldList.Count < 3) return false;
-
-            SketchLine first = oldList.First();
-
-            // remove first, since its not a valid choice
-            oldList.Remove(first);
-
-            SketchLine current = first;
-            newList.Add(current);
-
-            SketchLine next;
-
-            int length = oldList.Count;
-
-            for (int i = 0; i < length; i++)
+            if (order == WindingDir.CounterClockwise)
             {
-                message += current.Points[0].Position + " -> ";
-
-                next = oldList.Find(line => line.Points[0] == current.Points[1]);
-                if (next != null)
-                {
-                    // remove from list to speed up searching...
-                    oldList.Remove(next);
-                    newList.Add(next);                
-                    current = next;                 
-                    continue;
-                }
-
-                next = oldList.Find(l => l.Points[1] == current.Points[1]);
-                if (next != null)
-                {
-                    // remove from list to speed up searching...
-                    oldList.Remove(next);
-                    // reverse the line
-                    newList.Add(new SketchLine(next.Points[1], next.Points[0], next.ID));
-                    current = next;
-                    continue;
-                }
-
-                // no matching line found
-                return false;
+                Lines.Reverse();
+                outlineVerts.Reverse();
             }
 
-            message += current.Points[0].Position + " -> ";
-            message += newList.Last().Points[1].Position;
-
-            if (newList.Last().Points[1] == first.Points[0])
-            {
-                Lines = newList;
-                Debug.Log(message);
-                return true;
-            }  
-            return false;
-        }
-        public bool UpdateVertices()
-        {
-            EdgeVertices = new List<MyVector2>();
-
-            foreach (SketchLine line in Lines)
-            {
-                EdgeVertices.Add(new MyVector2(line.Points[0].Position));
-            }
-
-            WindingDir order = PolyUtils.FindWindingDir(EdgeVertices);
-
-            if (order == WindingDir.None)
-            {
-                Debug.Log($"Winding Order could not be determined.");
-                return false;
-            }
-
-            if (order == WindingDir.Clockwise)
-            {
-                EdgeVertices.Reverse();
-            }
-
-            return true;
-        }
-        public bool UpdateTriangles()
-        {
             //Triangulate
             System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-
             timer.Start();
 
-
-            Triangulation = _EarClipping.Triangulate(EdgeVertices, optimizeTriangles: false);
+            ClosedShape outline = new ClosedShape(outlineVerts);
+            if (PolyUtils.Triangulate(outline, out List<int> triangles))
+            {
+                Face = new Face(outlineVerts, new Vector3(0, 0, 1), triangles);
+            }
 
             timer.Stop();
-            Debug.Log($"Number of triangles from ear clipping: {Triangulation.Count}");
             Debug.Log($"Generated an Ear Clipping triangulation in {timer.ElapsedMilliseconds / 1000f} seconds");
 
             return true;
@@ -310,20 +231,11 @@ namespace Editors.SketchEdit
 
     public class JsonSketch
     {
-        [JsonProperty("Name")]
-        public string Name;
-
-        [JsonProperty("Id")]
-        public uint SketchID;
-
-        [JsonProperty("Points")]
-        public List<SketchPoint> Points;
-
-        [JsonProperty("Lines")]
-        public List<JsonSketchLine> Lines;
-
-        [JsonProperty("Constraints")]
-        public List<JsonConstraint> Constraints;
+        [JsonProperty("Name")] public string Name;
+        [JsonProperty("Id")] public uint SketchID;
+        [JsonProperty("Points")] public List<SketchPoint> Points;
+        [JsonProperty("Lines")] public List<JsonSketchLine> Lines;
+        [JsonProperty("Constraints")] public List<JsonConstraint> Constraints;
 
         // Auxiliary
         public Sketch ToSketch()

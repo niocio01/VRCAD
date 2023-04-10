@@ -119,13 +119,8 @@ namespace Editors.SketchEdit
         }
         public bool AcceptPressed()
         {
-            if (Sketch.HullIsClosed())
+            if (Sketch.GenerateFace())
             {
-                print("Sketch is closed. Leaving sketch.");
-
-                Sketch.UpdateVertices();
-                Sketch.UpdateTriangles();
-
                 return true;
             }
             print("Sketch is not closed. Cannot Accept.");

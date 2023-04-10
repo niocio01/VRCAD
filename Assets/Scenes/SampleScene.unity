@@ -334,8 +334,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f487531a0912dd8478eac9496c1c622e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jsonFile: {fileID: 4900000, guid: 781aa282295affa47928bbebd9fbf6a3, type: 3}
-  useJsonFile: 0
+  jsonFile: {fileID: 4900000, guid: f51cffbd04ccfa643b9849d73c49b6a0, type: 3}
+  useJsonFile: 1
   meshDrawer: {fileID: 826415533}
   sketchEditorGameObject: {fileID: 26130126051230268}
   mainEditorGameObject: {fileID: 808937182}
@@ -1651,8 +1651,13 @@ MonoBehaviour:
       m_Calls: []
   deselectedColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 1, g: 1, b: 1, a: 1}
-  defaultButton: {fileID: 0}
-  radioButtons: []
+  defaultButton: {fileID: 75714144}
+  radioButtons:
+  - {fileID: 1272919354}
+  - {fileID: 103456214}
+  - {fileID: 75714144}
+  - {fileID: 74322123}
+  - {fileID: 1306904647}
 --- !u!1 &501064641
 GameObject:
   m_ObjectHideFlags: 0
@@ -2535,9 +2540,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 826415530}
-  m_LocalRotation: {x: -0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
   m_LocalPosition: {x: 1, y: 0.8, z: -0.6}
-  m_LocalScale: {x: -1, y: 1, z: -1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2597,8 +2602,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2e5f011f3701054787f660734b28469, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  partEditor: {fileID: 0}
-  meshRenderer: {fileID: 0}
+  partEditor: {fileID: 7127986}
+  meshRenderer: {fileID: 826415532}
 --- !u!1 &870453916
 GameObject:
   m_ObjectHideFlags: 0
