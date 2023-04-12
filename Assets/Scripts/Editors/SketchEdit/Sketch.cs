@@ -187,7 +187,10 @@ namespace Editors.SketchEdit
             ClosedShape outline = new ClosedShape(outlineVerts);
             if (PolyUtils.Triangulate(outline, out List<int> triangles))
             {
-                Face = new Face(new Vector3(0, 0, 0), new Vector3(0, 0, 1), outlineVerts, triangles.ToArray());
+                Face = new Face(
+                    new Pose(new Vector3(0, 0, 0), Quaternion.LookRotation(Vector3.forward, Vector3.up)),
+                    outlineVerts,
+                    triangles.ToArray());
             }
 
             timer.Stop();

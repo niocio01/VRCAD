@@ -15,14 +15,22 @@ namespace Geometry
             }
             get
             {
-                return Vertices2.ConvertAll(v => new Vector3(v.x, v.y, 0));
+                return Vertices2.ConvertAll(v => new Vector3(v.x, v.y, 0) + Origin);
             } 
         }
-        
-        public Vector3 Origin { get; private set; }
+
+        public Pose Pose { get; private set; }
+
+        public Vector3 Origin => Pose.position;
 
         /// Used to generate the vertex normals
-        public Vector3 FaceNormal { private set; get; }
+        public Vector3 FaceNormal
+        {
+            get
+            {
+                return Pose.forward;
+            }
+        }
 
         /// Just a list filled with FaceNormal
         public List<Vector3> Normals
@@ -100,34 +108,41 @@ namespace Geometry
             }
         }
 
-        public Face(Vector3 origin, Vector3 faceNormal, List<Vector2> vertices2, int[] triangles)
+        public Face(Pose pose, List<Vector2> vertices2, int[] triangles)
         {
-            Origin = origin;
-            if (faceNormal.magnitude == 0f)
-            {
-                Debug.LogError("Face Normal cannot have length of zero.");
-                return;
-            }
-            FaceNormal = faceNormal;
+            Pose = pose;
             Vertices2 = vertices2;
             TriangleIndices = triangles;
         }
 
-        public Face(Vector3 origin, Vector3 faceNormal, List<Vector3> vertices3, int[] triangles)
+        public Face(Pose pose, List<Vector3> vertices3, int[] triangles)
         {
-            Origin = origin;
-            if (faceNormal.magnitude == 0f)
-            {
-                Debug.LogError("Face Normal cannot have length of zero.");
-                return;
-            }
-            FaceNormal = faceNormal;
+            Pose = pose;
             Vertices3 = vertices3;
             TriangleIndices = triangles;
         }
 
+        public void Mirror()
+        {
+            // mirror Normal
+            Pose newPose = new Pose(Pose.position, Quaternion.LookRotation(Pose.forward.Reverse(), Pose.up.Reverse()));
+            Pose = newPose;
+            
+            // mirror each vertex around origin
+            List<Vector2> newVerts = new List<Vector2>();
+            foreach (Vector2 vertex in Vertices2)
+            {
+                newVerts.Add(new Vector2( vertex.x, -vertex.y));
+            }
+            Vertices2 = newVerts;
+
+            // flip triangles an Normals
+            FlipNormals();
+        }
+
         public void FlipNormals()
         {
+            // flip triangle windings
             foreach (FaceTriangle triangle in Triangles)
             {
                 triangle.FlipNormal();

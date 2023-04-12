@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Editors.SketchEdit;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Geometry
@@ -221,9 +223,9 @@ namespace Geometry
             float k = (d - a * z1 - b * z2 - c * z3) / (a * a + b * b + c * c);
 
             // get position of projection in original (3D) coordinate system
-            float z1_ = z1 + k * a;
-            float z2_ = z2 + k * b;
-            float z3_ = z2 + k * c;
+            float z1_ = (float)Math.Round(z1 + k * a, 4, MidpointRounding.AwayFromZero);
+            float z2_ = (float)Math.Round(z2 + k * b, 4, MidpointRounding.AwayFromZero);
+            // float z3_ = z2 + k * c;
             
             // assuming unit vectors of new (2D) coordinate system are the x and y of the provided plane normal.
             Vector2 projection = new Vector2(z1_ , z2_);
@@ -231,11 +233,19 @@ namespace Geometry
 
             
             // for custom unit vectors:
-            Vector3 e1 = new Vector3(1, 0, 0);
-            Vector3 e2 = new Vector3(0, 1, 0);
+            // Vector3 e1 = new Vector3(1, 0, 0);
+            // Vector3 e2 = new Vector3(0, 1, 0);
+            //
+            // Vector2 customProj =
+            //     new Vector2(e1.x * z1_ + e1.y * z2_ + e1.z * z3_, e2.x * z1_ + e2.y * z2_ + e2.z * z3_);
+        }
 
-            Vector2 customProj =
-                new Vector2(e1.x * z1_ + e1.y * z2_ + e1.z * z3_, e2.x * z1_ + e2.y * z2_ + e2.z * z3_);
+        public static Vector3 PlaneVecTo3D(Vector2 vector2, Pose pose)
+        {
+            Matrix4x4 mat =  Matrix4x4.TRS(pose.position, Quaternion.FromToRotation(pose.forward, new Vector3(0, 0,1)), Vector3.one);
+            
+            Vector3 vector = mat.MultiplyPoint3x4(new Vector3(vector2.x, vector2.y, 0));
+            return vector;
         }
 
         public static bool IsVertexInsideCorner(LinkedVertex vertex, LinkedVertex corner)
@@ -267,6 +277,11 @@ namespace Geometry
         public static Vector3 Reverse(this Vector3 vector)
         {
             return new Vector3(-vector.x, -vector.y, -vector.z);
+        }
+
+        public static Vector2 Mirror(this Vector2 vector)
+        {
+            return new Vector2(-vector.x, -vector.y);
         }
     }
 }
