@@ -72,18 +72,16 @@ namespace Geometry
         {
             foreach (LinkedVertex vertex in Vertices)
             {
-                // Reflex vertex cannot be inside another concave ear
-                if (vertex.IsReflex) continue;
+                // no need to test the corner or neighbours
+                if (vertex == corner || vertex == corner.Prev || vertex == corner.Next)
+                {
+                    continue;
+                }
                 
                 if (PolyUtils.IsVertexInsideCorner(vertex, corner)) return false;
             }
 
             return true;
-        }
-
-        public List<Vector2> GetVector2S()
-        {
-            return Vertices.ConvertAll(v => v.Pos);
         }
     }
     

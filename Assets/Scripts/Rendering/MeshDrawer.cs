@@ -26,17 +26,22 @@ namespace Rendering
             Sketch sketch = partEditor.Part.Sketches.FirstOrDefault();
 
             MyMesh myMesh = new MyMesh();
-            
-            myMesh.AddFace(sketch.Face);
-            MeshOperations.Extrude(sketch.Face, new Vector3(0, 0, 0.2f), ref myMesh);
 
+            if (sketch.Face != null)
+            {
+                myMesh.AddFace(sketch.Face);
+                MeshOperations.Extrude(sketch.Face, new Vector3(0, 0, 0.2f), ref myMesh);
 
-            _mesh.vertices = myMesh.Vertices;
-            _mesh.triangles = myMesh.Triangles;
-            _mesh.normals = myMesh.Normals;
+                _mesh.vertices = myMesh.Vertices;
+                _mesh.triangles = myMesh.Triangles;
+                _mesh.normals = myMesh.Normals;
+                _mesh.RecalculateBounds();
+            }
 
-            // Mesh.RecalculateNormals();
-            _mesh.RecalculateBounds();
+            else
+            {
+                _mesh.Clear();
+            }
         }
     }
 }

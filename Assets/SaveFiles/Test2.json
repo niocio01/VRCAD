@@ -1,0 +1,98 @@
+{
+  "Meta": {
+    "Title": "EditorTest",
+    "Description": "Made VR Editor",
+    "Author": "Nico Zuber",
+    "Creation": "2023-04-15T22:31:37.5525285+02:00",
+    "LastEdit": "2023-04-15T22:31:46.8918015+02:00"
+  },
+  "Data": {
+    "Sketches": [
+      {
+        "Name": "Default",
+        "Id": 0,
+        "Points": [
+          {
+            "Position": [
+              "0",
+              "0.2"
+            ],
+            "Id": 0
+          },
+          {
+            "Position": [
+              "0.3",
+              "-0.1"
+            ],
+            "Id": 1
+          },
+          {
+            "Position": [
+              "0",
+              "-0.1"
+            ],
+            "Id": 2
+          },
+          {
+            "Position": [
+              "-0.2",
+              "0"
+            ],
+            "Id": 3
+          },
+          {
+            "Position": [
+              "-0.2",
+              "0.2"
+            ],
+            "Id": 4
+          }
+        ],
+        "Lines": [
+          {
+            "Id": 0,
+            "PointIDs": [
+              0,
+              1
+            ],
+            "Construction": false
+          },
+          {
+            "Id": 1,
+            "PointIDs": [
+              1,
+              2
+            ],
+            "Construction": false
+          },
+          {
+            "Id": 2,
+            "PointIDs": [
+              2,
+              3
+            ],
+            "Construction": false
+          },
+          {
+            "Id": 3,
+            "PointIDs": [
+              3,
+              4
+            ],
+            "Construction": false
+          },
+          {
+            "Id": 4,
+            "PointIDs": [
+              4,
+              0
+            ],
+            "Construction": false
+          }
+        ],
+        "Constraints": []
+      }
+    ],
+    "Features": []
+  }
+}

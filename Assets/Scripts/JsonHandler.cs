@@ -10,7 +10,29 @@ using Editors.PartEdit;
 
 public class JsonHandler : MonoBehaviour
 {
-    public static void JsonSave(Part part)
+    public static void PrintJson(Part part)
+    {
+        StringBuilder json = JsonCreate(part);
+        print(json);
+    }
+    
+    public static void JsonSave(Part part, String path)
+    {
+        if (!File.Exists(path))
+        {
+            // File.CreateText(path);
+        }
+
+        StringBuilder json = JsonCreate(part);
+
+        StreamWriter streamWriter = new StreamWriter(path, false);
+        streamWriter.Write(json);
+        streamWriter.Close();
+        
+        Debug.Log($"Saved Part to File. :{path}");
+    }
+
+    private static StringBuilder JsonCreate(Part part)
     {
         JsonSerializer serializer = new JsonSerializer();
         serializer.Converters.Add(new Vec2JsonConverter());
@@ -25,8 +47,9 @@ public class JsonHandler : MonoBehaviour
             serializer.Serialize(writer, part.ToJsonPart());
         }
 
-        print(jsonString);
+        return jsonString;
     }
+    
     public static Part JsonLoad(TextAsset jsonAsset) 
     {
         JsonSerializer serializer = new JsonSerializer();

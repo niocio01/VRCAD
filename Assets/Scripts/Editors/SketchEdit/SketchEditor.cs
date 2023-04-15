@@ -33,7 +33,7 @@ namespace Editors.SketchEdit
         private LineTool _lineTool;
 
         public Sketch Sketch { get; private set; }
-        public SketchToolsT CurrentToolT { get; private set; } = SketchToolsT.Line;
+        public SketchToolsT CurrentToolT { get; private set; }
         private GameObject _reticle;
 
         private void Awake()
@@ -71,6 +71,8 @@ namespace Editors.SketchEdit
             if (sketch == null) return false;
 
             SetSketch(sketch);
+            // set default tool
+            SetTool("LineTool");
 
             return true;
         }

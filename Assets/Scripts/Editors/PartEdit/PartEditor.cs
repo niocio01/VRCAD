@@ -14,8 +14,10 @@ namespace Editors.PartEdit
 
     public class PartEditor : MonoBehaviour
     {
-        [SerializeField] private TextAsset jsonFile;
+        [SerializeField] private string SaveFileName;
+        [SerializeField] private string SaveFilesFolderPath = Application.dataPath + "/SaveFiles/";
         [SerializeField] private bool useJsonFile;
+        [SerializeField] private TextAsset jsonFile;
         [SerializeField] private MeshDrawer meshDrawer;
         [SerializeField] private GameObject sketchEditorGameObject;
         [SerializeField] private GameObject mainEditorGameObject;
@@ -51,7 +53,7 @@ namespace Editors.PartEdit
                 }
             }
         }
-        public void AcceptPressed()
+        public void OnAccept()
         {
             switch (_editMode)
             {
@@ -69,7 +71,7 @@ namespace Editors.PartEdit
                 case EditModeT.Extrude: break;
             }
         }
-        public void CancelPressed()
+        public void OnCancel()
         {
             switch (_editMode)
             {
@@ -77,10 +79,27 @@ namespace Editors.PartEdit
                 case EditModeT.Sketch: break;
                 case EditModeT.Extrude: break;
             }
+
+            meshDrawer.UpdateMesh();
         }
-        public void PrintJson()
+
+        public void OnSave()
         {
-            JsonHandler.JsonSave(Part);
+            Part.UpdateLastChanged();
+            Part.Save(SaveFilesFolderPath + SaveFileName + ".json");
+        }
+
+        public void OnDelete()
+        {
+            Part = new Part("EditorTest", "Made VR Editor", "Nico Zuber");
+            Part.AddSketch(new Sketch(0, "Default"));
+            _sketchEditor.StartEditSketch(Part.Sketches.First());
+
+            _editMode = EditModeT.Sketch;
+            sketchEditorGameObject.SetActive(true);
+            mainEditorGameObject.SetActive(false);
+
+            meshDrawer.UpdateMesh();
         }
     }
 }

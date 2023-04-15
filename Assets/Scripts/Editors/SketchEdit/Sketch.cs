@@ -166,7 +166,10 @@ namespace Editors.SketchEdit
         // Auxiliary
         public bool GenerateFace()
         {
-            PolyUtils.GenerateOutline(Lines, out List<SketchLine> sortedLines, out List<Vector2> outlineVerts);
+            if (!PolyUtils.GenerateOutline(Lines, out List<SketchLine> sortedLines, out List<Vector2> outlineVerts))
+            {
+                return false;
+            }
             Lines = sortedLines;
             
             // Make sure winding order is correct
@@ -180,21 +183,16 @@ namespace Editors.SketchEdit
                 outlineVerts.Reverse();
             }
 
-            //Triangulate
-            System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-            timer.Start();
-
             ClosedShape outline = new ClosedShape(outlineVerts);
-            if (PolyUtils.Triangulate(outline, out List<int> triangles))
+            if (!PolyUtils.Triangulate(outline, out List<int> triangles))
             {
-                Face = new Face(
-                    new Pose(new Vector3(0, 0, 0), Quaternion.LookRotation(Vector3.forward, Vector3.up)),
-                    outlineVerts,
-                    triangles.ToArray());
+                return false;
             }
 
-            timer.Stop();
-            Debug.Log($"Generated an Ear Clipping triangulation in {timer.ElapsedMilliseconds / 1000f} seconds");
+            Face = new Face(
+                new Pose(new Vector3(0, 0, 0), Quaternion.LookRotation(Vector3.forward, new Vector3(-1, 0, 0))),
+                outlineVerts,
+                triangles.ToArray());
 
             return true;
         }

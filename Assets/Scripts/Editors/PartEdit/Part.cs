@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Editors.FeatureEditor;
 using Editors.SketchEdit;
 using Newtonsoft.Json;
@@ -45,6 +47,15 @@ namespace Editors.PartEdit
         {
             Sketches.Add(sketch);
             SketchIdCounter++;
+        }
+
+        public void UpdateLastChanged()
+        {
+            PartInfo.LastEdit = DateTime.Now;
+        }
+        public void Save(String path)
+        {
+            JsonHandler.JsonSave(this, path);
         }
 
         // Auxiliary
@@ -106,7 +117,7 @@ namespace Editors.PartEdit
         [JsonProperty("Description")] public string Description { get; private set; }
         [JsonProperty("Author")] public string Author { get; private set; }
         [JsonProperty("Creation")] public DateTime Creation { get; private set; }
-        [JsonProperty("LastEdit")] public DateTime LastEdit { get; private set; }
+        [JsonProperty("LastEdit")] public DateTime LastEdit { get; set; }
 
         // Constructor
         public PartInfo(string title, string description, string author)

@@ -40,7 +40,7 @@ public class JsonTest : MonoBehaviour
     {
         InitTestSketchObject();
 
-        JsonHandler.JsonSave(_testPart);
+        JsonHandler.PrintJson(_testPart);
     }
 
     [SerializeField] TextAsset jsonFile;
