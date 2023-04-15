@@ -11,11 +11,11 @@ namespace Geometry
         public List<Vector3> Vertices3 {
             private set
             {
-                Vertices2 = value.ConvertAll(v => PolyUtils.ProjectToPlane(v, Origin, FaceNormal));
+                Vertices2 = value.ConvertAll(v => PolyUtils.ProjectToPlane(v, Pose));
             }
             get
             {
-                return Vertices2.ConvertAll(v => new Vector3(v.x, v.y, 0) + Origin);
+                return Vertices2.ConvertAll(v => PolyUtils.PlaneVecTo3D(v, Pose));
             } 
         }
 

@@ -21,7 +21,7 @@ namespace Geometry
                 int i = 0;
                 foreach (Face face in Faces)
                 {
-                    foreach (Vector3 vertex in face.Vertices3)
+                    foreach (Vector2 vertex in face.Vertices2)
                     {
                         verts[i] = PolyUtils.PlaneVecTo3D(vertex, face.Pose);
                         i++;
@@ -97,7 +97,7 @@ namespace Geometry
                 new Pose(baseFace.Origin + extrudeVector, baseFace.Pose.rotation),
                 baseFace.Vertices3.ConvertAll(v => v + extrudeVector),
                 baseFace.TriangleIndices);
-            
+
             topFace.Mirror();
 
             mesh.AddFace(topFace);
@@ -109,11 +109,10 @@ namespace Geometry
                 List<Vector3> vertices = new List<Vector3>();
                 vertices.Add(baseFace.Vertices3[i]);
                 vertices.Add(baseFace.Vertices3[(i + 1) % noOfVerts]);
-                vertices.Add(topFace.Vertices3[i]);
-                vertices.Add(topFace.Vertices3[(i + 1) % noOfVerts]);
-                
+                vertices.Add(baseFace.Vertices3[i] + extrudeVector);
+                vertices.Add(baseFace.Vertices3[(i + 1) % noOfVerts] + extrudeVector);
 
-                    int[] triIndexes = new int[6];
+                int[] triIndexes = new int[6];
                 
                 // first Triangle
                 triIndexes[0] = 1;
@@ -126,10 +125,10 @@ namespace Geometry
                 triIndexes[5] = 3;
 
                 Vector3 normal = Vector3.Cross(vertices[2] - vertices[0], vertices[1] - vertices[0]).normalized;
-                Vector3 forward = (vertices[0] - vertices[2]).normalized; 
-                Vector3 origin = vertices[1] - vertices[0] + (vertices[2] - vertices[1]) / 2;
+                Vector3 upward = (vertices[2] - vertices[0]).normalized; 
+                Vector3 origin = vertices[0] + (vertices[3] - vertices[0]) / 2;
 
-                Pose pose = new Pose(origin, Quaternion.LookRotation(forward, normal ));
+                Pose pose = new Pose(origin, Quaternion.LookRotation(normal, upward  ));
 
                 Face face = new Face(pose, vertices, triIndexes);
     

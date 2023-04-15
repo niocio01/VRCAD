@@ -199,37 +199,21 @@ namespace Geometry
             return a.x * b.y - b.x * a.y;
         }
 
-        public static Vector2 ProjectToPlane(Vector3 vector, Vector3 planeOrigin, Vector3 planeNormal)
+        public static Vector2 ProjectToPlane(Vector3 vector, Pose facePose)
         {
-            // https://www.baeldung.com/cs/3d-point-2d-plane
+            Matrix4x4 mat = Matrix4x4.TRS(
+                Vector3.zero,
+                Quaternion.Inverse(facePose.rotation),
+                Vector3.one);
 
-            
-            // TODO: make inline
-            float a = planeNormal.x;
-            float b = planeNormal.y;
-            float c = planeNormal.z;
+            Vector3 newVector = mat.MultiplyPoint3x4(vector - facePose.position);
 
-            float p = planeOrigin.x;
-            float q = planeOrigin.y;
-            float r = planeOrigin.z;
+            if (newVector.z < -0.001 || newVector.z > 0.001)
+            {
+                Debug.Log($"Vector {vector} is not on Plane. Norm:{facePose.rotation} Orig:{facePose.position}");
+            }
 
-            float z1 = vector.x;
-            float z2 = vector.y;
-            float z3 = vector.z;
-
-            // d = ap + bq + cr
-            float d = a * p + b * q + c * r;
-
-            float k = (d - a * z1 - b * z2 - c * z3) / (a * a + b * b + c * c);
-
-            // get position of projection in original (3D) coordinate system
-            float z1_ = (float)Math.Round(z1 + k * a, 4, MidpointRounding.AwayFromZero);
-            float z2_ = (float)Math.Round(z2 + k * b, 4, MidpointRounding.AwayFromZero);
-            // float z3_ = z2 + k * c;
-            
-            // assuming unit vectors of new (2D) coordinate system are the x and y of the provided plane normal.
-            Vector2 projection = new Vector2(z1_ , z2_);
-            return projection;
+            return new Vector2(newVector.x, newVector.y);
 
             
             // for custom unit vectors:
@@ -240,12 +224,14 @@ namespace Geometry
             //     new Vector2(e1.x * z1_ + e1.y * z2_ + e1.z * z3_, e2.x * z1_ + e2.y * z2_ + e2.z * z3_);
         }
 
-        public static Vector3 PlaneVecTo3D(Vector2 vector2, Pose pose)
+        public static Vector3 PlaneVecTo3D(Vector2 vector2, Pose facePose)
         {
-            Matrix4x4 mat =  Matrix4x4.TRS(pose.position, Quaternion.FromToRotation(pose.forward, new Vector3(0, 0,1)), Vector3.one);
-            
-            Vector3 vector = mat.MultiplyPoint3x4(new Vector3(vector2.x, vector2.y, 0));
-            return vector;
+            Matrix4x4 mat =  Matrix4x4.TRS(Vector3.zero, facePose.rotation, Vector3.one);
+
+            Vector3 vector3 = new Vector3(vector2.x, vector2.y, 0);
+
+            Vector3 newVector = mat.MultiplyPoint3x4(vector3) + facePose.position;
+            return newVector;
         }
 
         public static bool IsVertexInsideCorner(LinkedVertex vertex, LinkedVertex corner)
