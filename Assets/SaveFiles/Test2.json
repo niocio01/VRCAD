@@ -3,8 +3,8 @@
     "Title": "EditorTest",
     "Description": "Made VR Editor",
     "Author": "Nico Zuber",
-    "Creation": "2023-04-16T12:33:02.5751895+02:00",
-    "LastEdit": "2023-04-16T12:33:14.7881837+02:00"
+    "Creation": "2023-04-16T18:18:49.7906071+02:00",
+    "LastEdit": "2023-04-16T18:19:21.3342411+02:00"
   },
   "Data": {
     "Sketches": [
@@ -14,68 +14,39 @@
         "Points": [
           {
             "Position": [
-              "0",
-              "0.2"
+              "-0.1",
+              "0"
             ],
             "Id": 0
           },
           {
             "Position": [
-              "0.2",
+              "0.1",
               "0"
             ],
             "Id": 1
           },
           {
             "Position": [
-              "0",
-              "-0.2"
+              "0.1",
+              "0.2"
             ],
             "Id": 2
           },
           {
             "Position": [
-              "0",
-              "-0.1"
+              "-0.1",
+              "0.2"
             ],
             "Id": 3
-          },
-          {
-            "Position": [
-              "-0.3",
-              "-0.1"
-            ],
-            "Id": 4
-          },
-          {
-            "Position": [
-              "-0.3",
-              "0.1"
-            ],
-            "Id": 5
-          },
-          {
-            "Position": [
-              "0",
-              "0.1"
-            ],
-            "Id": 6
           }
         ],
         "Lines": [
           {
-            "Id": 0,
+            "Id": 3,
             "PointIDs": [
-              0,
-              1
-            ],
-            "Construction": false
-          },
-          {
-            "Id": 1,
-            "PointIDs": [
-              1,
-              2
+              3,
+              0
             ],
             "Construction": false
           },
@@ -88,34 +59,18 @@
             "Construction": false
           },
           {
-            "Id": 3,
+            "Id": 1,
             "PointIDs": [
-              3,
-              4
+              1,
+              2
             ],
             "Construction": false
           },
           {
-            "Id": 4,
+            "Id": 0,
             "PointIDs": [
-              4,
-              5
-            ],
-            "Construction": false
-          },
-          {
-            "Id": 5,
-            "PointIDs": [
-              5,
-              6
-            ],
-            "Construction": false
-          },
-          {
-            "Id": 6,
-            "PointIDs": [
-              6,
-              0
+              0,
+              1
             ],
             "Construction": false
           }
