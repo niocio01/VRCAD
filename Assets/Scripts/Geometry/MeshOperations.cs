@@ -98,7 +98,7 @@ namespace Geometry
                 baseFace.Vertices3.ConvertAll(v => v + extrudeVector),
                 baseFace.TriangleIndices);
 
-            topFace.Mirror();
+            baseFace.Mirror();
 
             mesh.AddFace(topFace);
 
@@ -125,10 +125,10 @@ namespace Geometry
                 triIndexes[5] = 3;
 
                 Vector3 normal = Vector3.Cross(vertices[2] - vertices[0], vertices[1] - vertices[0]).normalized;
-                Vector3 upward = (vertices[2] - vertices[0]).normalized; 
+                Vector3 upward = (vertices[0] - vertices[2]).normalized; 
                 Vector3 origin = vertices[0] + (vertices[3] - vertices[0]) / 2;
 
-                Pose pose = new Pose(origin, Quaternion.LookRotation(normal, upward  ));
+                Pose pose = new Pose(origin, Quaternion.LookRotation(normal, upward));
 
                 Face face = new Face(pose, vertices, triIndexes);
     

@@ -172,9 +172,9 @@ namespace Geometry
                     earFound = true;
 
                     // Valid ear Found, so save the triangle and clip the ear.
-                    triangles.Add(vertex.Prev.Index);
-                    triangles.Add(vertex.Index);
                     triangles.Add(vertex.Next.Index);
+                    triangles.Add(vertex.Index);
+                    triangles.Add(vertex.Prev.Index);
                     
                     closedShape.Remove(vertex);
                     break;

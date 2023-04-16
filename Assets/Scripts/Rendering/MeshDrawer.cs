@@ -30,7 +30,7 @@ namespace Rendering
             if (sketch.Face != null)
             {
                 myMesh.AddFace(sketch.Face);
-                MeshOperations.Extrude(sketch.Face, new Vector3(0, 0, 0.2f), ref myMesh);
+                MeshOperations.Extrude(sketch.Face, new Vector3(0, 0, 0.1f), ref myMesh);
 
                 _mesh.vertices = myMesh.Vertices;
                 _mesh.triangles = myMesh.Triangles;
