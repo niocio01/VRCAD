@@ -2500,6 +2500,7 @@ GameObject:
   - component: {fileID: 826415531}
   - component: {fileID: 826415532}
   - component: {fileID: 826415533}
+  - component: {fileID: 826415534}
   m_Layer: 0
   m_Name: Geometry
   m_TagString: Untagged
@@ -2578,6 +2579,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   partEditor: {fileID: 7127986}
   meshRenderer: {fileID: 826415532}
+--- !u!114 &826415534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 826415530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f5273d8fcce70642a3575d93c0e8d20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_geometry: {fileID: 826415530}
+  m_worldGripRight: {fileID: 8037240786264339763, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
+  m_worldReleaseRight: {fileID: 3458287400335997262, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
+  m_worldGripLeft: {fileID: 6666600320411220809, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
+  m_worldReleaseLeft: {fileID: -9008491166084256805, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
 --- !u!1 &870453916
 GameObject:
   m_ObjectHideFlags: 0
@@ -5782,7 +5804,8 @@ MonoBehaviour:
   m_DirectInteractor: {fileID: 0}
   m_RayInteractor: {fileID: 0}
   m_TeleportInteractor: {fileID: 0}
-  m_Select: {fileID: 0}
+  m_Select: {fileID: -6131295136447488360, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
   m_AnchorTranslate: {fileID: 0}
   m_AnchorRotate: {fileID: 0}
   m_TeleportModeActivate: {fileID: 0}
@@ -5818,7 +5841,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7030454282215622201}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9ac216f0eb04754b1d938aac6380b31, type: 3}
   m_Name: 
@@ -6273,8 +6296,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7030454282215622200}
-  - component: {fileID: 3389804939389060739}
   - component: {fileID: 7030454282215622205}
+  - component: {fileID: 3389804939389060739}
   m_Layer: 0
   m_Name: RightHand
   m_TagString: Untagged

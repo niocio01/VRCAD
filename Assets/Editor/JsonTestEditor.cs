@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(JsonTest))]
-public class JsonTestEditor : Editor
+public class JsonTestEditor : UnityEditor.Editor
 {
     public override void OnInspectorGUI()
     {
