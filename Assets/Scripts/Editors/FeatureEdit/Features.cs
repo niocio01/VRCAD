@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using Editors.SketchEdit;
+using Geometry;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
-namespace Editors.FeatureEditor
+namespace Editors.FeatureEdit
 {
     public abstract class Feature
     {
@@ -12,6 +14,9 @@ namespace Editors.FeatureEditor
         {
             FeatureID = id;
         }
+        
+        public abstract bool ApplyFeature(ref MyMesh mesh);
+        
         public abstract JsonFeature ToJsonFeature();
     }
     public abstract class JsonFeature
@@ -36,6 +41,12 @@ namespace Editors.FeatureEditor
             BaseSketch = baseSketch;
             ExtrusionHeight = height;
         }
+
+        public override bool ApplyFeature(ref MyMesh mesh)
+        {
+            return MeshOperations.Extrude(BaseSketch.Face, new Vector3(0, 0, ExtrusionHeight), ref mesh);
+        }
+        
         public override JsonFeature ToJsonFeature()
         {
             return new JsonExtrude(ExtrusionHeight, BaseSketch.SketchID, FeatureID);
@@ -74,6 +85,12 @@ namespace Editors.FeatureEditor
             BaseSketch = baseSketch;
             Axis = new SketchElementReference("Line", baseSketch, axis);
         }
+
+        public override bool ApplyFeature(ref MyMesh mesh)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public override JsonFeature ToJsonFeature()
         {
             return new JsonRevolve(BaseSketch.SketchID, Axis.ToJsonRef(), FeatureID);

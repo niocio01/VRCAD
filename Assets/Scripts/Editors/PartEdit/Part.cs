@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Editors.FeatureEditor;
+using Editors.FeatureEdit;
 using Editors.SketchEdit;
 using Newtonsoft.Json;
 

@@ -14,8 +14,8 @@ namespace Editors.PartEdit
 
     public class PartEditor : MonoBehaviour
     {
-        [SerializeField] private string SaveFileName;
-        [SerializeField] private string SaveFilesFolderPath = Application.dataPath + "/SaveFiles/";
+        [SerializeField] private string saveFileName;
+        [SerializeField] private string saveFilesFolderPath = Application.dataPath + "/SaveFiles/";
         [SerializeField] private bool useJsonFile;
         [SerializeField] private TextAsset jsonFile;
         [SerializeField] private MeshDrawer meshDrawer;
@@ -29,30 +29,41 @@ namespace Editors.PartEdit
         {
             _sketchEditor = sketchEditorGameObject.GetComponent<SketchEditor>();
         }
+        
         private void Start()
         {
             if (!useJsonFile || jsonFile == null)
             {
                 Part = new Part("EditorTest", "Made VR Editor", "Nico Zuber");
-                Part.AddSketch(new Sketch(0, "Default"));
-                _sketchEditor.StartEditSketch(Part.Sketches.First());
-
-                _editMode = EditModeT.Sketch;
-                sketchEditorGameObject.SetActive(true);
-                mainEditorGameObject.SetActive(false);
             }
             else
             {
                 Part = JsonHandler.JsonLoad(jsonFile);
-
-                if (_sketchEditor.StartEditSketch(Part.Sketches.First()))
+            }
+            if (Part.Features.Count < 1)
+            {
+                // create Sketch if there is none
+                if (Part.Sketches.Count < 1)
+                {
+                    Part.AddSketch(new Sketch(0, "Default"));
+                    _sketchEditor.StartEditSketch(Part.Sketches.First());
+                }
+                // if sketch incomplete, edit it.
+                if (Part.Sketches.Count == 1 && !Part.Sketches.First().GenerateFace())
                 {
                     _editMode = EditModeT.Sketch;
                     sketchEditorGameObject.SetActive(true);
                     mainEditorGameObject.SetActive(false);
+                    return;
                 }
             }
+            // Features or closed sketch found, show Mesh
+            _editMode = EditModeT.Main;
+            meshDrawer.RebuildMesh();
+            sketchEditorGameObject.SetActive(false);
+            mainEditorGameObject.SetActive(true);
         }
+        
         public void OnAccept()
         {
             switch (_editMode)
@@ -63,7 +74,7 @@ namespace Editors.PartEdit
                     if (_sketchEditor.AcceptPressed())
                     {
                         _editMode = EditModeT.Main;
-                        meshDrawer.UpdateMesh();
+                        meshDrawer.RebuildMesh();
                         sketchEditorGameObject.SetActive(false);
                         mainEditorGameObject.SetActive(true);
                     }
@@ -71,6 +82,7 @@ namespace Editors.PartEdit
                 case EditModeT.Extrude: break;
             }
         }
+        
         public void OnCancel()
         {
             switch (_editMode)
@@ -80,13 +92,13 @@ namespace Editors.PartEdit
                 case EditModeT.Extrude: break;
             }
 
-            meshDrawer.UpdateMesh();
+            meshDrawer.RebuildMesh();
         }
 
         public void OnSave()
         {
             Part.UpdateLastChanged();
-            Part.Save(SaveFilesFolderPath + SaveFileName + ".json");
+            Part.Save(saveFilesFolderPath + saveFileName + ".json");
         }
 
         public void OnDelete()
@@ -99,7 +111,7 @@ namespace Editors.PartEdit
             sketchEditorGameObject.SetActive(true);
             mainEditorGameObject.SetActive(false);
 
-            meshDrawer.UpdateMesh();
+            meshDrawer.RebuildMesh();
         }
     }
 }

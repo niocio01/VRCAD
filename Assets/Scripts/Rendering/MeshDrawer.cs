@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Editors.FeatureEdit;
 using Editors.PartEdit;
 using Editors.SketchEdit;
 using Geometry;
@@ -10,38 +11,43 @@ namespace Rendering
 {
     public class MeshDrawer : MonoBehaviour
     {
-    
         [SerializeField] private PartEditor partEditor;
         [SerializeField] private MeshRenderer meshRenderer;
-
+        
+        private MyMesh _myMesh;
         private Mesh _mesh;
+        
         private void Awake()
         {
             var filter = meshRenderer.AddComponent<MeshFilter>();
             _mesh = filter.mesh;
         }
-        public void UpdateMesh()
+        
+        public void RebuildMesh()
         {
-            // TODO: use not just the first, but all of the sketches and features to build the mesh
-            Sketch sketch = partEditor.Part.Sketches.FirstOrDefault();
-
-            MyMesh myMesh = new MyMesh();
-
-            if (sketch.Face != null)
+            _myMesh = new MyMesh();
+            _mesh.Clear();
+            
+            if (partEditor.Part.Features.Count < 1)
             {
-                myMesh.AddFace(sketch.Face);
-                MeshOperations.Extrude(sketch.Face, new Vector3(0, 0, 0.1f), ref myMesh);
-
-                _mesh.vertices = myMesh.Vertices;
-                _mesh.triangles = myMesh.Triangles;
-                _mesh.normals = myMesh.Normals;
-                _mesh.RecalculateBounds();
+                Sketch sketch = partEditor.Part.Sketches.First();
+                if (sketch.Face == null) return;
+                
+                _myMesh.AddFace(sketch.Face);
             }
 
             else
             {
-                _mesh.Clear();
+                foreach (Feature feature in partEditor.Part.Features)
+                {
+                    feature.ApplyFeature(ref _myMesh);
+                }
             }
+            
+            _mesh.vertices = _myMesh.Vertices;
+            _mesh.triangles = _myMesh.Triangles;
+            _mesh.normals = _myMesh.Normals;
+            _mesh.RecalculateBounds();
         }
     }
 }

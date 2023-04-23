@@ -3,9 +3,9 @@ using Newtonsoft.Json;
 using System;
 using System.Text;
 using System.IO;
+using Editors.FeatureEdit;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 using Newtonsoft.Json.Linq;
-using Editors.FeatureEditor;
 using Editors.PartEdit;
 
 public class JsonHandler : MonoBehaviour
