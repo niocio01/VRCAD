@@ -76,14 +76,13 @@ public class JsonFeature2JsonConverter : JsonConverter<JsonFeature>
         {
             case "Extrude" :
             {
-                    return JsonExtrude.Deserialize(jsonObject);
+                return JsonExtrude.Deserialize(jsonObject);
             }
 
             case "Revolve":
             {
-                    return JsonRevolve.Deserialize(jsonObject);
-                }
-
+                return JsonRevolve.Deserialize(jsonObject);
+            }
             default: throw new JsonException("Unknown feature type: " + type); 
         }
     }
