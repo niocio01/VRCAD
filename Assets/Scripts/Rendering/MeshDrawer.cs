@@ -7,6 +7,7 @@ using Editors.SketchEdit;
 using Geometry;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.XR.Interaction.Toolkit;
 
 namespace Rendering
@@ -21,6 +22,7 @@ namespace Rendering
         private MyMesh _myMesh;
         private Mesh _mesh;
         private bool _hit = false;
+        private Face _highlightFace;
         
         private void Awake()
         {
@@ -50,52 +52,87 @@ namespace Rendering
             }
             
             _mesh.vertices = _myMesh.Vertices;
-            _mesh.triangles = _myMesh.Triangles;
             _mesh.normals = _myMesh.Normals;
-            _mesh.RecalculateBounds();
+            _mesh.subMeshCount = 2;
+            SetFullMeshTris();
 
             meshCollider.sharedMesh = _mesh;
         }
 
-        private bool GetHitTriangle()
+        private void SetFullMeshTris()
+        {
+            _mesh.SetIndices(_myMesh.Triangles, MeshTopology.Triangles, 0, calculateBounds: false);
+            _mesh.SetIndices(new int[]{}, MeshTopology.Triangles, 1, calculateBounds: false);
+            
+            _mesh.RecalculateBounds();
+        }
+
+        private void SetMeshTrisWithHighlight(Face highlightFace)
+        {
+            if (highlightFace == null)
+                return;
+            
+            List<int> mainTris = new List<int>();
+            List<int> highlightTris = new List<int>();
+
+            foreach (Face face in _myMesh.Faces)
+            {
+                List<int> temp = face.TriangleIndices.ToList().ConvertAll(i => i + face.VertexIndexStart);
+                
+                if (face == highlightFace)
+                {
+                    highlightTris.AddRange(temp);
+                }
+                else
+                {
+                    mainTris.AddRange(temp);
+                }
+            }
+            
+            _mesh.SetIndices(mainTris, MeshTopology.Triangles, 0, calculateBounds:false);
+            _mesh.SetIndices(highlightTris, MeshTopology.Triangles, 1, calculateBounds: false);
+
+            _mesh.RecalculateBounds();
+        }
+
+        private Face GetHitFace()
         {
             if (!rayInteractor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
-                return false;
+                return null;
 
             MeshCollider hitMeshCollider = hit.collider as MeshCollider;
             if (hitMeshCollider != null && hitMeshCollider.sharedMesh != _mesh)
-                return false;
+                return null;
 
-            Vector3[] vertices = _mesh.vertices;
-            int[] triangles = _mesh.triangles;
-            Vector3 p0 = vertices[triangles[hit.triangleIndex * 3 + 0]];
-            Vector3 p1 = vertices[triangles[hit.triangleIndex * 3 + 1]];
-            Vector3 p2 = vertices[triangles[hit.triangleIndex * 3 + 2]];
-            Transform hitTransform = hit.collider.transform;
-            p0 = hitTransform.TransformPoint(p0);
-            p1 = hitTransform.TransformPoint(p1);
-            p2 = hitTransform.TransformPoint(p2);
-            Debug.DrawLine(p0, p1);
-            Debug.DrawLine(p1, p2);
-            Debug.DrawLine(p2, p0);
-            return true;
+            Face hitFace = _myMesh.GetFaceByMeshTriangle(hit.triangleIndex);
+
+            return hitFace;
         }
 
         public void OnRayHit()
         {
             _hit = true;
+            SetMeshTrisWithHighlight(_highlightFace);
         }
 
         private void Update()
         {
             if (!_hit)
                 return;
+
+            Face hitFace = GetHitFace();
             
-            if (!GetHitTriangle())
+            if (hitFace == null)
             {
                 _hit = false;
+                SetFullMeshTris();
                 return;
             }
+            if (hitFace == _highlightFace)
+                return;
+
+            _highlightFace = hitFace;
+            SetMeshTrisWithHighlight(hitFace);
         }
     }
 }

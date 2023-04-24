@@ -18,12 +18,16 @@ namespace Geometry
                 return Vertices2.ConvertAll(v => PolyUtils.PlaneVecTo3D(v, Pose));
             } 
         }
+        
+        // VertexIndices used for subMesh creation
+        public int VertexIndexStart { get; set; }
+        public int VertexIndexEnd => VertexIndexStart + Vertices3.Count - 1;
 
         public Pose Pose { get; private set; }
 
         public Vector3 Origin => Pose.position;
 
-        /// Used to generate the vertex normals
+        /// Used to generate the vertex normals*
         public Vector3 FaceNormal
         {
             get
