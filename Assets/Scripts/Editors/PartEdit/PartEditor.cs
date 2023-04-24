@@ -59,9 +59,14 @@ namespace Editors.PartEdit
             }
             // Features or closed sketch found, show Mesh
             _editMode = EditModeT.Main;
-            meshDrawer.RebuildMesh();
+            RebuildPart();
             sketchEditorGameObject.SetActive(false);
             mainEditorGameObject.SetActive(true);
+        }
+
+        public void RebuildPart()
+        {
+            meshDrawer.RebuildMesh();
         }
         
         public void OnAccept()
