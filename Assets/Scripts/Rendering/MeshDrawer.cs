@@ -7,79 +7,81 @@ using Editors.SketchEdit;
 using Geometry;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.XR.Interaction.Toolkit;
 
 namespace Rendering
 {
     public class MeshDrawer : MonoBehaviour
     {
-        [SerializeField] private PartEditor partEditor;
+       
         [SerializeField] private MeshRenderer meshRenderer;
         [SerializeField] private XRRayInteractor rayInteractor;
         [SerializeField] private MeshCollider meshCollider;
+        [SerializeField] private MeshManager meshManager;
 
         private MyMesh _myMesh;
         private Mesh _mesh;
         private bool _hit = false;
-        private Face _highlightFace;
-        
+        private FlatSurface _highlightFlatSurface;
+        private bool _meshIsOld;
+
         private void Awake()
         {
             var filter = meshRenderer.AddComponent<MeshFilter>();
             _mesh = filter.mesh;
+            MeshManager.OnMeshUpdated += MarkMeshAsOld;
         }
-        
-        public void RebuildMesh()
-        {
-            _myMesh = new MyMesh();
-            _mesh.Clear();
-            
-            if (partEditor.Part.Features.Count < 1)
-            {
-                Sketch sketch = partEditor.Part.Sketches.First();
-                if (sketch.Face == null) return;
-                
-                _myMesh.AddFace(sketch.Face);
-            }
 
-            else
+        private void Start()
+        {
+            _myMesh = meshManager.PartMesh;
+            meshCollider.sharedMesh = _mesh;
+        }
+
+        private void MarkMeshAsOld()
+        {
+            _meshIsOld = true;
+            if (meshManager.PartMesh != null)
             {
-                foreach (Feature feature in partEditor.Part.Features)
-                {
-                    feature.ApplyFeature(ref _myMesh);
-                }
+                _myMesh = meshManager.PartMesh;
             }
+        }
+
+        private void UpdateMesh()
+        {
+            _myMesh.RecalculateArrays();
             
-            _mesh.vertices = _myMesh.Vertices;
-            _mesh.normals = _myMesh.Normals;
+            _mesh.vertices = _myMesh.VertexArray;
+            _mesh.normals = _myMesh.NormalArray;
+            // _mesh.RecalculateBounds();
+            // _mesh.RecalculateNormals();
             _mesh.subMeshCount = 2;
             SetFullMeshTris();
 
-            meshCollider.sharedMesh = _mesh;
+            _meshIsOld = false;
         }
 
         private void SetFullMeshTris()
         {
-            _mesh.SetIndices(_myMesh.Triangles, MeshTopology.Triangles, 0, calculateBounds: false);
+            _mesh.SetIndices(_myMesh.TriangleArray, MeshTopology.Triangles, 0, calculateBounds: false);
             _mesh.SetIndices(new int[]{}, MeshTopology.Triangles, 1, calculateBounds: false);
             
             _mesh.RecalculateBounds();
         }
 
-        private void SetMeshTrisWithHighlight(Face highlightFace)
+        private void SetMeshTrisWithHighlight(FlatSurface highlightFlatSurface)
         {
-            if (highlightFace == null)
+            if (highlightFlatSurface == null)
                 return;
             
             List<int> mainTris = new List<int>();
             List<int> highlightTris = new List<int>();
 
-            foreach (Face face in _myMesh.Faces)
+            foreach (Surface surface in meshManager.PartMesh.Surfaces)
             {
-                List<int> temp = face.TriangleIndices.ToList().ConvertAll(i => i + face.VertexIndexStart);
+                List<int> temp = surface.FaceVertexTriangleIndices.ToList().ConvertAll(i => i + surface.VertexIndexStart);
                 
-                if (face == highlightFace)
+                if (surface == highlightFlatSurface)
                 {
                     highlightTris.AddRange(temp);
                 }
@@ -95,7 +97,7 @@ namespace Rendering
             _mesh.RecalculateBounds();
         }
 
-        private Face GetHitFace()
+        private FlatSurface GetHitFace()
         {
             if (!rayInteractor.TryGetCurrent3DRaycastHit(out RaycastHit hit))
                 return null;
@@ -104,35 +106,44 @@ namespace Rendering
             if (hitMeshCollider != null && hitMeshCollider.sharedMesh != _mesh)
                 return null;
 
-            Face hitFace = _myMesh.GetFaceByMeshTriangle(hit.triangleIndex);
+            Surface hitSurface = meshManager.PartMesh.GetFaceByMeshTriangle(hit.triangleIndex);
+            if (hitSurface is FlatSurface surface)
+            {
+                return surface;
+            }
 
-            return hitFace;
+            return null;
         }
 
         public void OnRayHit()
         {
             _hit = true;
-            SetMeshTrisWithHighlight(_highlightFace);
+            SetMeshTrisWithHighlight(_highlightFlatSurface);
         }
 
         private void Update()
         {
+            if (_meshIsOld)
+            {
+                UpdateMesh();
+            }
+            
             if (!_hit)
                 return;
-
-            Face hitFace = GetHitFace();
             
-            if (hitFace == null)
+            FlatSurface hitFlatSurface = GetHitFace();
+            
+            if (hitFlatSurface == null)
             {
                 _hit = false;
                 SetFullMeshTris();
                 return;
             }
-            if (hitFace == _highlightFace)
+            if (hitFlatSurface == _highlightFlatSurface)
                 return;
-
-            _highlightFace = hitFace;
-            SetMeshTrisWithHighlight(hitFace);
+            
+            _highlightFlatSurface = hitFlatSurface;
+            SetMeshTrisWithHighlight(hitFlatSurface);
         }
     }
 }

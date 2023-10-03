@@ -19,11 +19,12 @@ namespace Editors.FeatureEdit
 
         public override bool ApplyFeature(ref MyMesh mesh)
         {
+            FlatSurface baseSurface = mesh.AddFlatSurfaceFromSketch(BaseSketch);
             return MeshOperations.ExtrudeFace(
-                BaseSketch.Face,
+                baseSurface,
                 new Vector3(0, 0, ExtrusionHeight),
                 ref mesh,
-                mesh.Faces.Count < 1);
+                mesh.Surfaces.Count < 1);
         }
         
         public override JsonFeature ToJsonFeature()

@@ -1,6 +1,7 @@
 using System.Linq;
 using UnityEngine;
 using Editors.SketchEdit;
+using Geometry;
 using Rendering;
 
 namespace Editors.PartEdit
@@ -19,6 +20,7 @@ namespace Editors.PartEdit
         [SerializeField] private bool useJsonFile;
         [SerializeField] private TextAsset jsonFile;
         [SerializeField] private MeshDrawer meshDrawer;
+        [SerializeField] private MeshManager meshManager;
         [SerializeField] private GameObject sketchEditorGameObject;
         [SerializeField] private GameObject mainEditorGameObject;
         public Part Part { get; private set; }
@@ -49,7 +51,7 @@ namespace Editors.PartEdit
                     _sketchEditor.StartEditSketch(Part.Sketches.First());
                 }
                 // if sketch incomplete, edit it.
-                if (Part.Sketches.Count == 1 && !Part.Sketches.First().GenerateFace())
+                if (Part.Sketches.Count == 1 && !Part.Sketches.First().IsClosed())
                 {
                     _editMode = EditModeT.Sketch;
                     sketchEditorGameObject.SetActive(true);
@@ -66,7 +68,7 @@ namespace Editors.PartEdit
 
         public void RebuildPart()
         {
-            meshDrawer.RebuildMesh();
+            meshManager.RebuildMesh();
         }
         
         public void OnAccept()
@@ -76,10 +78,10 @@ namespace Editors.PartEdit
                 case EditModeT.Main: break;
                 case EditModeT.Sketch:
                 {
-                    if (_sketchEditor.AcceptPressed())
+                    if (_sketchEditor.SketchIsClosed())
                     {
                         _editMode = EditModeT.Main;
-                        meshDrawer.RebuildMesh();
+                        meshManager.AddSketchAsSurface(_sketchEditor.Sketch);
                         sketchEditorGameObject.SetActive(false);
                         mainEditorGameObject.SetActive(true);
                     }
@@ -97,7 +99,7 @@ namespace Editors.PartEdit
                 case EditModeT.Extrude: break;
             }
 
-            meshDrawer.RebuildMesh();
+            meshManager.RebuildMesh();
         }
 
         public void OnSave()
@@ -116,7 +118,7 @@ namespace Editors.PartEdit
             sketchEditorGameObject.SetActive(true);
             mainEditorGameObject.SetActive(false);
 
-            meshDrawer.RebuildMesh();
+            meshManager.RebuildMesh();
         }
     }
 }

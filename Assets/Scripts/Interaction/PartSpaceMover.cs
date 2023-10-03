@@ -18,9 +18,6 @@ namespace Interaction
 
     public class PartSpaceMover : MonoBehaviour
     {
-        [Header("Settings")] [SerializeField] [Tooltip("Factor to set how strong the scaling is.")]
-        private float m_ScalingFactor = 1;
-        
         [Header("Objects")]
         [SerializeField] [Tooltip("The geometry gameobject that holds the part Mesh")]
         private GameObject m_Part;

@@ -121,11 +121,13 @@ namespace Geometry
             return false;
         }
 
-        public static bool Triangulate(ClosedShape closedShape, out List<int> triangles )
+        public static bool Triangulate(List<Vector2> vertices, out List<int> triangles )
         {
             triangles = null;
-            
-            if (!closedShape.IsValid)
+
+            ClosedShape outline = new ClosedShape(vertices);
+
+            if (!outline.IsValid)
             {
                 Debug.LogError("Provided Outline is invalid");
                 return false;
@@ -138,36 +140,36 @@ namespace Geometry
                 return false;
             }
     
-            if (PolygonHelper.ContainsColinearEdges(vertices))
+            if (PolygonHelper.ContainsCollinearEdges(vertices))
             {
-                errorMessage = "The vertex list contains colinear edges.";
+                errorMessage = "The vertex list contains collinear edges.";
                 return false;
             }    
             */
 
             // Make sure winding order is correct
-            WindingDir order = closedShape.GetWindingDir();
+            WindingDir order = outline.GetWindingDir();
 
             if (order == WindingDir.None) return false;
 
             if (order == WindingDir.CounterClockwise)
             {
-                closedShape.Reverse();
+                outline.Reverse();
             }
 
             triangles = new List<int>();
-            int numVerts = closedShape.Vertices.Count();
+            int numVerts = outline.Vertices.Count();
 
             for ( int i = 0; i < numVerts - 2; i++ )
             {
                 var earFound = false;
-                foreach (LinkedVertex vertex in closedShape.Vertices)
+                foreach (LinkedVertex vertex in outline.Vertices)
                 {
                     // is vertex Reflex?
                     if(vertex.IsReflex) continue;
                     
                     // are there any other vertexes inside it?
-                    if (!closedShape.IsCornerEmpty(vertex)) continue;
+                    if (!outline.IsCornerEmpty(vertex)) continue;
 
                     earFound = true;
 
@@ -175,8 +177,8 @@ namespace Geometry
                     triangles.Add(vertex.Next.Index);
                     triangles.Add(vertex.Index);
                     triangles.Add(vertex.Prev.Index);
-                    
-                    closedShape.Remove(vertex);
+
+                    outline.Remove(vertex);
                     break;
                 }
 

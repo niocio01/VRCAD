@@ -20,14 +20,16 @@ namespace Editors.SketchEdit
         public List<SketchLine> Lines { get; private set; }
         public List<SketchLine> ConstructionLines { get; private set; }
         public List<SketchConstraint> Constraints { get; private set; }
+        public Pose Pose { get; private set; }
 
         // Geometry
-        public Face Face { get; private set; }
+        public FlatSurface FlatSurface { get; set; }
 
         // Counters
         public uint PointIdCounter { get; private set; }
         public uint LineIdCounter { get; private set; }
         public uint ConstraintIdCounter { get; private set; }
+      
 
         // Constructor
         public Sketch(uint id, string name = "")
@@ -40,6 +42,10 @@ namespace Editors.SketchEdit
             Lines = new List<SketchLine>();
             ConstructionLines = new List<SketchLine>();
             Constraints = new List<SketchConstraint>();
+            Pose = new Pose(new Vector3(0, 0, 0),
+                Quaternion.LookRotation(
+                    new Vector3(0, 0, 1),
+                    new Vector3(0, 1, 0)));
         }
 
         // Get Elements
@@ -164,15 +170,24 @@ namespace Editors.SketchEdit
         }
 
         // Auxiliary
-        public bool GenerateFace()
+
+        public bool GetOutlineVertices(out List<Vector2> outlineVerts)
+        {
+            bool success = PolyUtils.GenerateOutline(Lines, out List<SketchLine> sortedLines, out List<Vector2> verts);
+            
+            outlineVerts = verts;
+            return success;
+        }
+        public bool IsClosed()
         {
             if (!PolyUtils.GenerateOutline(Lines, out List<SketchLine> sortedLines, out List<Vector2> outlineVerts))
             {
                 return false;
             }
+
             Lines = sortedLines;
-            
-            // Make sure winding order is correct
+
+            // while we have the data, Make sure winding order is correct
             WindingDir order = PolyUtils.FindWindingDir(outlineVerts);
 
             if (order == WindingDir.None) return false;
@@ -182,17 +197,6 @@ namespace Editors.SketchEdit
                 Lines.Reverse();
                 outlineVerts.Reverse();
             }
-
-            ClosedShape outline = new ClosedShape(outlineVerts);
-            if (!PolyUtils.Triangulate(outline, out List<int> triangles))
-            {
-                return false;
-            }
-
-            Face = new Face(
-                new Pose(new Vector3(0, 0, 0), Quaternion.LookRotation(new Vector3(0, 0, 1), new Vector3(0, 1, 0))),
-                outlineVerts,
-                triangles.ToArray());
 
             return true;
         }

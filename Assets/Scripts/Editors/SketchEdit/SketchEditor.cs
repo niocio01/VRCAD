@@ -119,18 +119,10 @@ namespace Editors.SketchEdit
                 default: print("unknown Sketch Tool selected:" + toolName); break;
             }
         }
-        public bool AcceptPressed()
+
+        public bool SketchIsClosed()
         {
-            if (Sketch.GenerateFace())
-            {
-                return true;
-            }
-            print("Sketch is not closed. Cannot Accept.");
-            return false;
-        }
-        public bool CancelPressed()
-        {
-            return true;
+            return Sketch.IsClosed();
         }
         public bool GetPointerPosition(out Vector3 absPos, out Vector3 relPos)
         {
